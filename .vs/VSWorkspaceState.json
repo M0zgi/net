@@ -1,0 +1,10 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\ClientServer",
+    "\\ClientServer\\ClientServer",
+    "\\ClientServer\\ClientServer\\ClientServer"
+  ],
+  "SelectedNode": "\\ClientServer\\ClientServer\\ClientServer\\Program.cs",
+  "PreviewInSolutionExplorer": false
+}
