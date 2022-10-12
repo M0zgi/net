@@ -23,19 +23,44 @@ namespace Client.Models
 
         public void Connect()
         {
-           try
-           {
+            
+            try
+            {
                IPEndPoint ipPoint = new IPEndPoint(IPAddress.Parse(ip), this.port);
 
                Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
                // подключаемся к удаленному хосту
                socket.Connect(ipPoint);
-           }
-           catch (Exception ex)
-           {
+
+               string message = "Привет сервер!";               
+               byte[] data = Encoding.Unicode.GetBytes(message);
+               socket.Send(data);
+
+               DateTime date = DateTime.Now;
+
+               data = new byte[256]; // буфер для ответа
+               StringBuilder builder = new StringBuilder();
+               int bytes = 0; // количество полученных байт
+ 
+               do
+               {
+                   bytes = socket.Receive(data, data.Length, 0);
+                   builder.Append(Encoding.Unicode.GetString(data, 0, bytes));
+               }
+               while (socket.Available > 0);
+
+               Console.WriteLine(date.ToShortTimeString() + " от " + socket.RemoteEndPoint + " получена строка: " + builder.ToString());
+
+
+               // закрываем сокет
+               socket.Shutdown(SocketShutdown.Both);
+               socket.Close();
+            }
+            catch (Exception ex)
+            {
                Console.WriteLine(ex.Message);
-           }
+            }
             
             
         }

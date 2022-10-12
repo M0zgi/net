@@ -40,12 +40,33 @@ namespace Server.Models
                 // начинаем прослушивание
                 listenSocket.Listen(10);
 
+                // получаем сообщение
+                StringBuilder builder = new StringBuilder();
+                int bytes = 0; // количество полученных байтов
+
+                byte[] data = new byte[256]; // буфер для получаемых данных
+
                 Console.WriteLine("Сервер запущен. Ожидание подключений...");
+
+                DateTime date = DateTime.Now;
 
                 while (true)
                 {
                     Socket handler = listenSocket.Accept();
-                    Console.WriteLine("Клиент пришел");
+
+                    do
+                    {
+                        bytes = handler.Receive(data);
+                        builder.Append(Encoding.Unicode.GetString(data, 0, bytes));
+                    }
+                    while (handler.Available > 0);
+
+                    Console.WriteLine(date.ToShortTimeString() + " от " + handler.RemoteEndPoint + " получена строка: " + builder.ToString());
+
+                    // отправляем ответ
+                    string message = "Привет клиент!";
+                    data = Encoding.Unicode.GetBytes(message);
+                    handler.Send(data);
 
                     // закрываем сокет
                     handler.Shutdown(SocketShutdown.Both);
