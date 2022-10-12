@@ -45,9 +45,12 @@ namespace Server.Models
                 while (true)
                 {
                     Socket handler = listenSocket.Accept();
+                    Console.WriteLine("Клиент пришел");
 
+                    // закрываем сокет
+                    handler.Shutdown(SocketShutdown.Both);
+                    handler.Close();
                 }
-
             }
             catch (Exception ex)
             {
