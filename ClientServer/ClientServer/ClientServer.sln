@@ -9,6 +9,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib", "Lib\Lib.csproj", "{443375B3-B88D-43B1-8838-AF6E82576CC4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Screens", "Screens", "{4CF61427-01DD-46B8-8544-5FA7963994F8}"
+	ProjectSection(SolutionItems) = preProject
+		C:\Users\Admin\Desktop\HW_NET\Screenshot_1.png = C:\Users\Admin\Desktop\HW_NET\Screenshot_1.png
+		C:\Users\Admin\Desktop\HW_NET\Screenshot_2.png = C:\Users\Admin\Desktop\HW_NET\Screenshot_2.png
+		C:\Users\Admin\Desktop\HW_NET\Screenshot_3.png = C:\Users\Admin\Desktop\HW_NET\Screenshot_3.png
+		C:\Users\Admin\Desktop\HW_NET\Screenshot_4.png = C:\Users\Admin\Desktop\HW_NET\Screenshot_4.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
