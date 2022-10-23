@@ -10,6 +10,7 @@ namespace Lib
     /// <summary>
     /// объект ответа
     /// </summary>
+    [Serializable]
     public class Response
     {
         /// <summary>

@@ -14,6 +14,7 @@ namespace Lib
     /// 1. Что нужно сделать
     /// 2 С чем это делать
     /// </summary>
+    [Serializable]
     public class Request
     {
         /// <summary>
