@@ -20,7 +20,9 @@ namespace Lib
         /// <summary>
         /// Команда которую должен выполнить сервер
         /// </summary>
-        RequestCommands command;
+        public RequestCommands Command;
+
+        //public string message { get; set; }
 
         /// <summary>
         /// Данные для работы сервера
