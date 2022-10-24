@@ -9,7 +9,7 @@ namespace Lib.Entities
     [Serializable]
     public class Auth
     {
-        public string Email;
-        public string Password;
+        public string? Email;
+        public string? Password;
     }
 }

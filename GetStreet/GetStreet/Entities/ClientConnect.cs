@@ -17,8 +17,6 @@ namespace GetStreet.Entities
         public int port { get; set; }
         public string ip { get; set; }
 
-        State state;
-
         private Task task;
         
         private ManualResetEvent acceptEvent = new ManualResetEvent(false);
@@ -44,28 +42,9 @@ namespace GetStreet.Entities
             {
                 Socket handler = (Socket)ar.AsyncState;
                 this.client_socket.EndConnect(ar);
-                string message = "Привет сервер!";               
-                //byte[] buffer = Encoding.Unicode.GetBytes(message);
-                //client_socket.Send(buffer);
-
-                ////DateTime date = DateTime.Now;
-
-                //buffer = new byte[256]; // буфер для ответа
-                //StringBuilder builder = new StringBuilder();
-                //int bytes = 0; // количество полученных байт
- 
-                //do
-                //{
-                //    bytes = client_socket.Receive(buffer, buffer.Length, 0);
-                //    builder.Append(Encoding.Unicode.GetString(buffer, 0, bytes));
-                //}
-                //while (client_socket.Available > 0);
-
-                //MessageBox.Show(DateTime.Now.ToShortTimeString() + " от " + client_socket.RemoteEndPoint + " получена строка: " + builder.ToString());
-            
+                string message = "Привет сервер!"; 
                 Request request = new Request();
                 request.Command = Lib.Enum.RequestCommands.Ping;
-                //request.message = message;
                 // Создаем тело запроса
                 Lib.Entities.Ping ping = new Lib.Entities.Ping();
                 ping.msg = message;
@@ -102,13 +81,13 @@ namespace GetStreet.Entities
                 }
                 while (client_socket.Available > 0);
                 Response response;
-                BinaryFormatter formatter1 = new BinaryFormatter();
+                //BinaryFormatter formatter1 = new BinaryFormatter();
 
-                using (MemoryStream ms1 = new MemoryStream(data))
+                using (MemoryStream ms = new MemoryStream(data))
                 {
                     try
                     {
-                        response = (Response)formatter1.Deserialize(ms1);
+                        response = (Response)formatter.Deserialize(ms);
                         switch (response.Status)
                         {
                             case ResponseStatus.OK:
@@ -127,25 +106,7 @@ namespace GetStreet.Entities
                     {
                         Console.WriteLine(ex.Message);
                     }
-
                 }
-
-
-                //byte[] buffer = new byte[256]; // буфер для ответа
-                //StringBuilder builder = new StringBuilder();
-                //int bytes = 0; // количество полученных байт
-
-                //do
-                //{
-                //    bytes = client_socket.Receive(buffer, buffer.Length, 0);
-                //    builder.Append(Encoding.Unicode.GetString(buffer, 0, bytes));
-                //}
-                //while (client_socket.Available > 0);
-
-
-
-                //MessageBox.Show(DateTime.Now.ToShortTimeString() + " от " + client_socket.RemoteEndPoint + " получена строка: " + builder.ToString());
-
 
                 // закрываем сокет
                 Disconnect();

@@ -105,37 +105,11 @@ namespace ServerConsole.Entities
                                     Console.WriteLine(DateTime.Now.ToShortTimeString() + " от " + accept_socket.RemoteEndPoint +
                                                       " получена строка: " + ping.msg);
 
-                                    Response response = new Response();
-
-                                    response.Status = ResponseStatus.OK;
-                                    string message = "Привет клиент!";
-                                    Ping pingResp = new Ping();
-                                    
-                                    //Ping pingResp = (Ping) response.Body;
-                                    pingResp.msg = message;
-                                    response.Body = pingResp;
-                                    BinaryFormatter formatter1 = new BinaryFormatter();
-                                    
-                                    using (var msg = new MemoryStream())
-                                    {
-                                        try
-                                        {
-                                            formatter1.Serialize(msg, response);
-                                            byte[] r = msg.ToArray();
-
-                                            // Отправка сущности на сервер
-                                            accept_socket.Send(r);
-                                            accept_socket.BeginDisconnect(false, new AsyncCallback(DisconnectCallBack), accept_socket);
-                                        } 
-                                        catch (Exception ex)
-                                        {
-                                            Console.WriteLine(ex.Message);
-                                        }
-                                    }
-
+                                    socketOk = accept_socket;
+                                    SendOk();
                                     //byte[] buff = new byte[256]; // буфер для получаемых данных
 
-                                   
+
                                     //buff = Encoding.Unicode.GetBytes(message);
 
                                     //if (accept_socket.Connected)
@@ -170,6 +144,38 @@ namespace ServerConsole.Entities
             Socket handler = ar.AsyncState as Socket;
             handler.EndDisconnect(ar);
             Console.WriteLine("Connection closed");
+        }
+
+        private Socket socketOk;
+        private void SendOk()
+        {
+            Response response = new Response();
+
+            response.Status = ResponseStatus.OK;
+            string message = "Привет клиент!";
+            Ping pingResp = new Ping();
+                                    
+            //Ping pingResp = (Ping) response.Body;
+            pingResp.msg = message;
+            response.Body = pingResp;
+            BinaryFormatter formatter = new BinaryFormatter();
+                                    
+            using (var ms = new MemoryStream())
+            {
+                try
+                {
+                    formatter.Serialize(ms, response);
+                    byte[] r = ms.ToArray();
+
+                    // Отправка сущности на сервер
+                    socketOk.Send(r);
+                    socketOk.BeginDisconnect(false, new AsyncCallback(DisconnectCallBack), socketOk);
+                } 
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
         }
     }
 }

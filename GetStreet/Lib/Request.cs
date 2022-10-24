@@ -22,11 +22,9 @@ namespace Lib
         /// </summary>
         public RequestCommands Command;
 
-        //public string message { get; set; }
-
         /// <summary>
         /// Данные для работы сервера
         /// </summary>
-        public object Body;
+        public object? Body;
     }
 }
