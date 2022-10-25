@@ -2338,7 +2338,8 @@
   },
   "projectFileDependencyGroups": {
     "net6.0-windows7.0": [
-      "Lib >= 1.0.0"
+      "Lib >= 1.0.0",
+      "Microsoft.EntityFrameworkCore >= 6.0.10"
     ]
   },
   "packageFolders": {
@@ -2383,6 +2384,12 @@
     "frameworks": {
       "net6.0-windows7.0": {
         "targetAlias": "net6.0-windows",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": {
+            "target": "Package",
+            "version": "[6.0.10, )"
+          }
+        },
         "imports": [
           "net461",
           "net462",
