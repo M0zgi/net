@@ -76,12 +76,10 @@ namespace GetStreet.Entities
                 do
                 {
                     bytes = client_socket.Receive(data);
-
-                    // builder.Append(Encoding.Unicode.GetString(data, 0, bytes));
                 }
                 while (client_socket.Available > 0);
+                
                 Response response;
-                //BinaryFormatter formatter1 = new BinaryFormatter();
 
                 using (MemoryStream ms = new MemoryStream(data))
                 {

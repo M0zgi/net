@@ -10,3 +10,5 @@ G:\VSProject\Net\GetStreet\Lib\obj\Debug\net6.0\Lib.dll
 G:\VSProject\Net\GetStreet\Lib\obj\Debug\net6.0\refint\Lib.dll
 G:\VSProject\Net\GetStreet\Lib\obj\Debug\net6.0\Lib.pdb
 G:\VSProject\Net\GetStreet\Lib\obj\Debug\net6.0\ref\Lib.dll
+G:\VSProject\Net\GetStreet\Lib\bin\Debug\net6.0\Lib.runtimeconfig.json
+G:\VSProject\Net\GetStreet\Lib\obj\Debug\net6.0\Lib.genruntimeconfig.cache
