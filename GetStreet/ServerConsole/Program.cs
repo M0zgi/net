@@ -18,7 +18,6 @@ Console.WriteLine("Логические диски : {0}",
         .Replace("\\", String.Empty));
 Console.WriteLine("\n\n");
 
-
 server.StartAsync();
 
 Console.WriteLine("IP: 127.0.0.1 \nPort: 4041");
