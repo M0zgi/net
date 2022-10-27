@@ -19,6 +19,7 @@ namespace Lib.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ZipCodes", x => x.Id);
+                    table.UniqueConstraint("UXC_ZipCodes_Code", x => x.Code);
                 });
 
             migrationBuilder.CreateTable(
@@ -44,12 +45,6 @@ namespace Lib.Migrations
                 name: "IX_Streets_ZipCodeId",
                 table: "Streets",
                 column: "ZipCodeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ZipCodes_Code",
-                table: "ZipCodes",
-                column: "Code",
-                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using LIB.Entities;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace DB.EntityTypeConfiguration
+namespace Lib.EntityTypeConfiguration
 {
     public class StreetEntityTypeConfiguration: IEntityTypeConfiguration<Street>
     {

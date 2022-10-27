@@ -7,10 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization.Formatters.Binary;
 using Lib;
+using Lib.Data;
 using Lib.Entities;
 using Lib.Enum;
-using DB.Data;
 using LIB.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace ServerConsole.Entities
 {

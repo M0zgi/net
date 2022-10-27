@@ -1,15 +1,17 @@
-﻿var dbContext = new DB.Data.ApplicationDbContext();
+﻿using Lib.Data;
+
+using var dbContext = new ApplicationDbContext();
 
 dbContext.Database.EnsureCreated();
 
 try
 {
-    if (dbContext == null)
-    {
-        dbContext = new DB.Data.ApplicationDbContext();
-    }
+    //if (dbContext == null)
+    //{
+    //    dbContext = new ApplicationDbContext();
+    //}
 
-    var Data = new DB.DemoData.LoadInfo();
+    var Data = new Lib.DemoData.LoadInfo();
 
     var zip1 = Data.LoadZip1();
     dbContext.Add(zip1);

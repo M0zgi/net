@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Lib.Entities;
 using LIB.Entities;
 
-namespace DB.DemoData
+namespace Lib.DemoData
 {
     public class LoadInfo
     {

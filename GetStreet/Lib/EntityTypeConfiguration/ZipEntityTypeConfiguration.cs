@@ -8,7 +8,7 @@ using Lib.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace DB.EntityTypeConfiguration
+namespace Lib.EntityTypeConfiguration
 {
     public class ZipEntityTypeConfiguration: IEntityTypeConfiguration<ZipCode>
     {

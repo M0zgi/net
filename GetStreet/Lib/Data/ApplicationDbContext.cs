@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Lib.Entities;
 using LIB.Entities;
 
-namespace DB.Data
+namespace Lib.Data
 {
     public class ApplicationDbContext: DbContext
     {
