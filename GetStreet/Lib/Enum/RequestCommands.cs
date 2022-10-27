@@ -10,6 +10,7 @@ namespace Lib.Enum
     {
         Auth,
         Ping,
+        Zip,
         Create,
         Read,
         Update,

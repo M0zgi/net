@@ -9,6 +9,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 using Lib;
 using Lib.Entities;
 using Lib.Enum;
+using DB.Data;
+using LIB.Entities;
 
 namespace ServerConsole.Entities
 {
@@ -107,18 +109,15 @@ namespace ServerConsole.Entities
 
                                     socketOk = accept_socket;
                                     SendOk();
-                                    //byte[] buff = new byte[256]; // буфер для получаемых данных
-
-
-                                    //buff = Encoding.Unicode.GetBytes(message);
-
-                                    //if (accept_socket.Connected)
-                                    //{
-                                    //    accept_socket.Send(buff);
-                                    //    accept_socket.BeginDisconnect(false, new AsyncCallback(DisconnectCallBack), accept_socket);
-                                    //}
                                 }
-
+                                break;
+                            case RequestCommands.Zip:
+                                ZipCode zipCode = (ZipCode) request.Body;
+                                Console.WriteLine(zipCode.Zip);
+                                socketOk = accept_socket;
+                                SendZip(zipCode.Zip);
+                                //socketOk = accept_socket;
+                                //socketOk.BeginDisconnect(false, new AsyncCallback(DisconnectCallBack), socketOk);
                                 break;
                             default:
                                 Console.WriteLine(" No Command ");
@@ -158,6 +157,49 @@ namespace ServerConsole.Entities
             //Ping pingResp = (Ping) response.Body;
             pingResp.msg = message;
             response.Body = pingResp;
+            BinaryFormatter formatter = new BinaryFormatter();
+                                    
+            using (var ms = new MemoryStream())
+            {
+                try
+                {
+                    formatter.Serialize(ms, response);
+                    byte[] r = ms.ToArray();
+
+                    // Отправка сущности на сервер
+                    socketOk.Send(r);
+                    socketOk.BeginDisconnect(false, new AsyncCallback(DisconnectCallBack), socketOk);
+                } 
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+        }
+
+        private void SendZip(string zip)
+        {
+            Response response = new Response();
+
+            response.Status = ResponseStatus.ZIP;
+            //string message = "Привет клиент!";
+            //Ping pingResp = new Ping();
+              
+            //ZipCode zipCod = new ZipCode();
+
+           // List<Street> streetList = new List<Street>();
+
+            using var dbContext = new ApplicationDbContext();
+
+            var street = dbContext
+                .Streets
+                .Where(x => x.ZipCode.Zip == zip)
+                .OrderByDescending(x => x.Name);
+                
+
+            //Ping pingResp = (Ping) response.Body;
+            //pingResp.msg = message;
+            response.Body = street.ToList();
             BinaryFormatter formatter = new BinaryFormatter();
                                     
             using (var ms = new MemoryStream())

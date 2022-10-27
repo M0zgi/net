@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.tb_Zip = new System.Windows.Forms.TextBox();
             this.btn_search = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.lb_result = new System.Windows.Forms.ListBox();
@@ -59,7 +59,7 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.textBox1);
+            this.groupBox1.Controls.Add(this.tb_Zip);
             this.groupBox1.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.groupBox1.Location = new System.Drawing.Point(12, 231);
             this.groupBox1.Name = "groupBox1";
@@ -68,12 +68,12 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Введите почтовый индекс";
             // 
-            // textBox1
+            // tb_Zip
             // 
-            this.textBox1.Location = new System.Drawing.Point(10, 23);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(188, 25);
-            this.textBox1.TabIndex = 0;
+            this.tb_Zip.Location = new System.Drawing.Point(10, 23);
+            this.tb_Zip.Name = "tb_Zip";
+            this.tb_Zip.Size = new System.Drawing.Size(188, 25);
+            this.tb_Zip.TabIndex = 0;
             // 
             // btn_search
             // 
@@ -84,6 +84,7 @@
             this.btn_search.TabIndex = 1;
             this.btn_search.Text = "Искать";
             this.btn_search.UseVisualStyleBackColor = false;
+            this.btn_search.Click += new System.EventHandler(this.btn_search_Click);
             // 
             // groupBox2
             // 
@@ -282,7 +283,7 @@
         #endregion
 
         private GroupBox groupBox1;
-        private TextBox textBox1;
+        private TextBox tb_Zip;
         private Button btn_search;
         private GroupBox groupBox2;
         private ListBox lb_result;

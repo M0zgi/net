@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
-using DB.Entities;
+using Lib.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -24,6 +25,9 @@ namespace DB.EntityTypeConfiguration
                 .HasColumnName("Code")
                 .HasMaxLength(10)
                 .IsRequired();
+
+            builder.HasAlternateKey(x => x.Zip)
+                .HasName("UXC_ZipCodes_Code");
         }
     }
 }

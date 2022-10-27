@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Lib.Entities;
 
-namespace DB.Entities
+namespace LIB.Entities
 {
+    [Serializable]
     public class Street
     {
         public Guid Id { get; set; }

@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LIB.Entities;
 
-namespace DB.Entities
+namespace Lib.Entities
 {
-    [Index(nameof(Zip), IsUnique = true)]
+    [Serializable]
     public class ZipCode
     {
         public Guid Id { get; set; }

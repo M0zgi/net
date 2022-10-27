@@ -9,6 +9,7 @@ namespace Lib.Enum
     public enum ResponseStatus
     {
         OK,
+        ZIP,
         NOT_FOUND,
         AUTH
     }

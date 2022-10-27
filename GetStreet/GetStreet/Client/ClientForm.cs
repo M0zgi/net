@@ -1,4 +1,5 @@
 ﻿using GetStreet.Entities;
+using Lib.Enum;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -22,13 +23,26 @@ namespace GetStreet.Client
         private void btn_testConnect_Click(object sender, EventArgs e)
         {
             client = new ClientConnect(Convert.ToInt32(numericPort.Value), tb_IP.Text);
-            client.ConnectAsync();
+            client.ConnectAsync("Привет сервер", RequestCommands.Ping);
         }
 
         private void btn_sign_in_Click(object sender, EventArgs e)
         {
             client = new ClientConnect(Convert.ToInt32(numericPort.Value), tb_IP.Text);
             client.AuthConnect(tb_login.Text, tb_pass.Text);
+        }
+
+        private void btn_search_Click(object sender, EventArgs e)
+        {
+            List<string> ls = new List<string>();
+            client = new ClientConnect(Convert.ToInt32(numericPort.Value), tb_IP.Text);
+            client.ConnectAsync(tb_Zip.Text, RequestCommands.Zip, ref ls);
+            lb_result.Items.Clear();
+
+            foreach (var zip in ls)
+            {
+                lb_result.Items.Add(zip);
+            }
         }
     }
 }

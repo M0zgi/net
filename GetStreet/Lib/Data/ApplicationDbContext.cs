@@ -5,7 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DB.Entities;
+using Lib.Entities;
+using LIB.Entities;
 
 namespace DB.Data
 {
