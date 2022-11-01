@@ -9,7 +9,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerConsole", "ServerCons
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lib", "Lib\Lib.csproj", "{DE7BFD61-6B31-44DB-921D-A14157BF4B78}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBLoad", "DBLoad\DBLoad.csproj", "{5EB37885-ACD1-4FD9-9E15-0DBA2FDDB0F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DBLoad", "DBLoad\DBLoad.csproj", "{5EB37885-ACD1-4FD9-9E15-0DBA2FDDB0F3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Screen", "Screen", "{546EB2CA-EC5D-4281-A3B6-44609E5DCD8E}"
+	ProjectSection(SolutionItems) = preProject
+		C:\Users\Admin\Desktop\HW_Auth\Screenshot_1.png = C:\Users\Admin\Desktop\HW_Auth\Screenshot_1.png
+		C:\Users\Admin\Desktop\HW_Auth\Screenshot_2.png = C:\Users\Admin\Desktop\HW_Auth\Screenshot_2.png
+		C:\Users\Admin\Desktop\HW_Auth\Screenshot_3.png = C:\Users\Admin\Desktop\HW_Auth\Screenshot_3.png
+		C:\Users\Admin\Desktop\HW_Auth\Screenshot_4.png = C:\Users\Admin\Desktop\HW_Auth\Screenshot_4.png
+		C:\Users\Admin\Desktop\HW_Auth\Screenshot_5.png = C:\Users\Admin\Desktop\HW_Auth\Screenshot_5.png
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
