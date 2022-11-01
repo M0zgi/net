@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Runtime.Serialization.Formatters.Binary;
 using Lib;
 using Lib.Data;
 using Lib.Entities;
 using Lib.Enum;
-using LIB.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace ServerConsole.Entities
 {
@@ -80,8 +73,6 @@ namespace ServerConsole.Entities
                 do
                 {
                     bytes = accept_socket.Receive(data);
-
-                    // builder.Append(Encoding.Unicode.GetString(data, 0, bytes));
                 }
                 while (accept_socket.Available > 0);
 
@@ -99,6 +90,26 @@ namespace ServerConsole.Entities
                             case RequestCommands.Auth:
                                 Auth auth = (Auth) request.Body;
                                 Console.WriteLine(auth.Email);
+                                Console.WriteLine(auth.Password);
+                                bool check;
+                                User user = new User();
+                                user.Email = auth.Email;
+                                user.Password = auth.Password;
+                                check = Login(user);
+                                if (check)
+                                {
+                                    Console.WriteLine("Ok");
+                                    socketOk = accept_socket;
+                                    LoginOkDeny(check);
+                                }
+
+                                else
+                                {
+                                    Console.WriteLine("No");
+                                    socketOk = accept_socket;
+                                    LoginOkDeny(check);
+                                }
+
                                 break;
                             case RequestCommands.Ping:
                                 Ping ping = (Ping) request.Body;
@@ -117,8 +128,6 @@ namespace ServerConsole.Entities
                                 Console.WriteLine(zipCode.Zip);
                                 socketOk = accept_socket;
                                 SendZip(zipCode.Zip);
-                                //socketOk = accept_socket;
-                                //socketOk.BeginDisconnect(false, new AsyncCallback(DisconnectCallBack), socketOk);
                                 break;
                             default:
                                 Console.WriteLine(" No Command ");
@@ -140,7 +149,6 @@ namespace ServerConsole.Entities
 
         private void DisconnectCallBack(IAsyncResult ar)
         {
-            //acceptEvent.WaitOne();
             Socket handler = ar.AsyncState as Socket;
             handler.EndDisconnect(ar);
             Console.WriteLine("Connection closed");
@@ -183,12 +191,6 @@ namespace ServerConsole.Entities
             Response response = new Response();
 
             response.Status = ResponseStatus.ZIP;
-            //string message = "Привет клиент!";
-            //Ping pingResp = new Ping();
-              
-            //ZipCode zipCod = new ZipCode();
-
-           // List<Street> streetList = new List<Street>();
 
             using var dbContext = new ApplicationDbContext();
 
@@ -196,11 +198,59 @@ namespace ServerConsole.Entities
                 .Streets
                 .Where(x => x.ZipCode.Zip == zip)
                 .OrderByDescending(x => x.Name);
-                
 
-            //Ping pingResp = (Ping) response.Body;
-            //pingResp.msg = message;
             response.Body = street.ToList();
+            BinaryFormatter formatter = new BinaryFormatter();
+                                    
+            using (var ms = new MemoryStream())
+            {
+                try
+                {
+                    formatter.Serialize(ms, response);
+                    byte[] r = ms.ToArray();
+
+                    // Отправка сущности на сервер
+                    socketOk.Send(r);
+                    socketOk.BeginDisconnect(false, new AsyncCallback(DisconnectCallBack), socketOk);
+                } 
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+        }
+
+        private bool Login(User user)
+        {
+            using var dbContext = new ApplicationDbContext();
+
+            var login = dbContext.Users
+                .FirstOrDefault(x => x.Email == user.Email);
+
+            bool b = user.Equals(login);
+
+            return b;
+        }
+
+        private void LoginOkDeny(bool check)
+        {
+            Response response = new Response();
+            string message = "";
+            if (check)
+            {
+                response.Status = ResponseStatus.OK;
+                message = "Вы успешно авторизовались! Клиент найден в базе";
+            }
+
+            else
+            {
+                response.Status = ResponseStatus.NOT_FOUND;
+                message = "Клиент не найден в базе. Проверьте введенные данные";
+            }
+            
+            Auth auth = new Auth();
+            auth.msg = message;
+            response.Body = auth;
             BinaryFormatter formatter = new BinaryFormatter();
                                     
             using (var ms = new MemoryStream())

@@ -15,6 +15,7 @@ namespace Lib.Data
         public DbSet<Street> Streets { get; set; }
 
         public DbSet<ZipCode> ZipCodes { get; set; }
+        public DbSet<User> Users { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // метод конфигурации подключения к БД c шифрованием строки

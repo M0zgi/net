@@ -171,6 +171,7 @@
             this.btn_sign_up.TabIndex = 5;
             this.btn_sign_up.Text = "Регистрация";
             this.btn_sign_up.UseVisualStyleBackColor = true;
+            this.btn_sign_up.Click += new System.EventHandler(this.btn_sign_up_Click);
             // 
             // gb_ip
             // 

@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security.Cryptography;
 using Lib;
 using Lib.Entities;
 using LIB.Entities;
 using Lib.Enum;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
+using Lib.Helpers;
 
 namespace GetStreet.Entities
 {
@@ -30,6 +26,9 @@ namespace GetStreet.Entities
         private Request request;
 
         private List<string> streetList;
+
+        private string? _email;
+        private string? _password;
 
         public ClientConnect(int port, string ip)
         {
@@ -62,21 +61,32 @@ namespace GetStreet.Entities
             acceptEvent.WaitOne();
         }
 
+        public void ConnectAsync(string email, string pass, RequestCommands requestform)
+        {
+            acceptEvent.Reset();
+            _email = email;
+            _password = pass;
+            request = new Request();
+            request.Command = requestform;
+            IPEndPoint ipPoint = new IPEndPoint(IPAddress.Parse(ip), this.port);
+            this.client_socket.BeginConnect(ipPoint, new AsyncCallback(ConnectCallBack), this.client_socket);
+            acceptEvent.WaitOne();
+        }
+
         private void ConnectCallBack(IAsyncResult ar)
         {
             try
             {
                 Socket handler = (Socket)ar.AsyncState;
                 this.client_socket.EndConnect(ar);
-                //string message = "Привет сервер!"; 
-
-                //Request request = new Request();
-                //request.Command = _request;
 
                 switch (request.Command)
                 {
                     case RequestCommands.Ping:
                         ReauestPing();
+                        break;
+                    case RequestCommands.Auth:
+                        AuthConnect();
                         break;
                     case RequestCommands.Zip:
                         ReauestZip();
@@ -85,12 +95,6 @@ namespace GetStreet.Entities
                         MessageBox.Show(" No Command ");
                         break;
                 }
-
-
-                //request.Command = Lib.Enum.RequestCommands.Ping;
-                // Создаем тело запроса
-
-                // auth.Password = password;
 
                 // закрываем сокет
                 Disconnect();
@@ -114,41 +118,28 @@ namespace GetStreet.Entities
             handler = client_socket;
             handler.EndDisconnect(ar);
             acceptEvent.Set();
-            MessageBox.Show("Connection closed");
+            //MessageBox.Show("Connection closed");
         }
 
         Socket _socket;
-        public void AuthConnect(string email, string password)
+        public void AuthConnect()
         {
-            if (_socket != null)
-            {
-                MessageBox.Show(" Вы подсоеденены ");
-                return;
-            }
+             request.Command = RequestCommands.Auth;
 
-            IPEndPoint ipPoint = new IPEndPoint(IPAddress.Parse(ip), this.port);
+             // Создаем тело запроса
+             Auth auth = new Auth();
+             auth.Email = _email;
 
-            _socket = new Socket(AddressFamily.InterNetwork,
-                SocketType.Stream, ProtocolType.Tcp);
+             byte[] salt = new byte[_email.Length];
+
+             PasswordHash passwordHash = new PasswordHash(_password, new SHA256CryptoServiceProvider(), salt);
+
+             auth.Password = passwordHash.password;
 
             try
             {
-                // Установка соединения
-                _socket.Connect(ipPoint);
-
-                // Создаем запрос на операцию на сервере
-                Request request = new Request();
-                request.Command = Lib.Enum.RequestCommands.Auth;
-
-                // Создаем тело запроса
-                Lib.Entities.Auth auth = new Lib.Entities.Auth();
-                auth.Email = email;
-                auth.Password = password;
-
                 request.Body = auth;
-
                 BinaryFormatter formatter = new BinaryFormatter();
-
                 using (var ms = new MemoryStream())
                 {
                     try
@@ -157,7 +148,7 @@ namespace GetStreet.Entities
                         byte[] r = ms.ToArray();
 
                         // Отправка сущности на сервер
-                        _socket.Send(r);
+                        client_socket.Send(r);
                     }
                     catch (Exception ex)
                     {
@@ -168,6 +159,47 @@ namespace GetStreet.Entities
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+            }
+
+            int bytes = 0; // количество полученных байтов
+            byte[] data = new byte[1024]; // буфер для получаемых данных
+
+            do
+            {
+                bytes = client_socket.Receive(data);
+            }
+            while (client_socket.Available > 0);
+
+            Response response;
+            Auth authResponse;
+            using (MemoryStream ms = new MemoryStream(data))
+            {
+                //Auth auth = new Auth();
+                BinaryFormatter formatter = new BinaryFormatter();
+                try
+                {
+                    response = (Response)formatter.Deserialize(ms);
+                    switch (response.Status)
+                    {
+                        case ResponseStatus.OK:
+                            authResponse = (Auth)response.Body;
+                            MessageBox.Show(authResponse.msg);
+                            break;
+
+                        case ResponseStatus.NOT_FOUND:
+                            authResponse = (Auth)response.Body;
+                            MessageBox.Show(authResponse.msg);
+                            break;
+
+                        default:
+                            MessageBox.Show("Ваш запрос не может быть обработан \nОбратитесь к разрабочтикам.");
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
         }
 
@@ -220,7 +252,7 @@ namespace GetStreet.Entities
                             break;
 
                         default:
-                            MessageBox.Show(" No Command ");
+                            MessageBox.Show("Ваш запрос не может быть обработан \nОбратитесь к разрабочтикам.");
                             break;
                     }
                 }
@@ -274,13 +306,8 @@ namespace GetStreet.Entities
                     {
                         case ResponseStatus.ZIP:
 
-
                             List<Street> ls1 = new List<Street>();
 
-
-                            //Street street = (Street)response.Body;
-                            //streetList = (List<string>)response.Body;
-                            //Console.WriteLine(pingResp.msg);
                             foreach (var str in (List<Street>)response.Body)
                             {
                                 ls1.Add(str);
@@ -294,7 +321,7 @@ namespace GetStreet.Entities
                             break;
 
                         default:
-                            MessageBox.Show(" No Command ");
+                            MessageBox.Show("Ваш запрос не может быть обработан \nОбратитесь к разрабочтикам.");
                             break;
                     }
                 }

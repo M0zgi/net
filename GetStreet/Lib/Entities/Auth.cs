@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lib.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,5 +12,6 @@ namespace Lib.Entities
     {
         public string? Email;
         public string? Password;
+        public string? msg;
     }
 }
