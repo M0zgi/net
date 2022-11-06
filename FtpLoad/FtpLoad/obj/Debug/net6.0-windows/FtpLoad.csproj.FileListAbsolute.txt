@@ -1,0 +1,17 @@
+G:\VSProject\Net\FtpLoad\FtpLoad\bin\Debug\net6.0-windows\FtpLoad.exe
+G:\VSProject\Net\FtpLoad\FtpLoad\bin\Debug\net6.0-windows\FtpLoad.deps.json
+G:\VSProject\Net\FtpLoad\FtpLoad\bin\Debug\net6.0-windows\FtpLoad.runtimeconfig.json
+G:\VSProject\Net\FtpLoad\FtpLoad\bin\Debug\net6.0-windows\FtpLoad.dll
+G:\VSProject\Net\FtpLoad\FtpLoad\bin\Debug\net6.0-windows\FtpLoad.pdb
+G:\VSProject\Net\FtpLoad\FtpLoad\obj\Debug\net6.0-windows\FtpLoad.csproj.AssemblyReference.cache
+G:\VSProject\Net\FtpLoad\FtpLoad\obj\Debug\net6.0-windows\FtpLoad.Form1.resources
+G:\VSProject\Net\FtpLoad\FtpLoad\obj\Debug\net6.0-windows\FtpLoad.csproj.GenerateResource.cache
+G:\VSProject\Net\FtpLoad\FtpLoad\obj\Debug\net6.0-windows\FtpLoad.GeneratedMSBuildEditorConfig.editorconfig
+G:\VSProject\Net\FtpLoad\FtpLoad\obj\Debug\net6.0-windows\FtpLoad.AssemblyInfoInputs.cache
+G:\VSProject\Net\FtpLoad\FtpLoad\obj\Debug\net6.0-windows\FtpLoad.AssemblyInfo.cs
+G:\VSProject\Net\FtpLoad\FtpLoad\obj\Debug\net6.0-windows\FtpLoad.csproj.CoreCompileInputs.cache
+G:\VSProject\Net\FtpLoad\FtpLoad\obj\Debug\net6.0-windows\FtpLoad.dll
+G:\VSProject\Net\FtpLoad\FtpLoad\obj\Debug\net6.0-windows\refint\FtpLoad.dll
+G:\VSProject\Net\FtpLoad\FtpLoad\obj\Debug\net6.0-windows\FtpLoad.pdb
+G:\VSProject\Net\FtpLoad\FtpLoad\obj\Debug\net6.0-windows\FtpLoad.genruntimeconfig.cache
+G:\VSProject\Net\FtpLoad\FtpLoad\obj\Debug\net6.0-windows\ref\FtpLoad.dll
