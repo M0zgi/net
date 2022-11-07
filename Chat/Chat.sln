@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatClient", "ChatClient\ChatClient.csproj", "{9D4AB419-0B51-497E-842B-498636F85CD4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib", "Lib\Lib.csproj", "{7F4A639E-BF69-40AD-AE71-25BF70F5FC30}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerChat", "ServerChat\ServerChat.csproj", "{726CFF7B-D96A-43BE-A820-81AB49C1148A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9D4AB419-0B51-497E-842B-498636F85CD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D4AB419-0B51-497E-842B-498636F85CD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D4AB419-0B51-497E-842B-498636F85CD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D4AB419-0B51-497E-842B-498636F85CD4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F4A639E-BF69-40AD-AE71-25BF70F5FC30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F4A639E-BF69-40AD-AE71-25BF70F5FC30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F4A639E-BF69-40AD-AE71-25BF70F5FC30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F4A639E-BF69-40AD-AE71-25BF70F5FC30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{726CFF7B-D96A-43BE-A820-81AB49C1148A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{726CFF7B-D96A-43BE-A820-81AB49C1148A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{726CFF7B-D96A-43BE-A820-81AB49C1148A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{726CFF7B-D96A-43BE-A820-81AB49C1148A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6AED5132-93B4-400D-9D8D-D957D0300203}
+	EndGlobalSection
+EndGlobal

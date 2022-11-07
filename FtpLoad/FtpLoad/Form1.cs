@@ -1,8 +1,10 @@
 using System.Drawing.Imaging;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using Image = System.Drawing.Image;
 
 namespace FtpLoad
@@ -12,6 +14,7 @@ namespace FtpLoad
 
         string _fullPath = "";
         string _safeFileName = "";
+        string _onlyFilePath = "";
 
         private int _hight;
         private int _widh;
@@ -119,6 +122,15 @@ namespace FtpLoad
                         
                         string pathFileName = openFileDialog.FileName;
                         string s = DateTime.Now.ToString("yyyyMMddhhmmss");
+
+                        //_onlyFilePath =
+                        //    openFileDialog.FileName.Remove(
+                        //        openFileDialog.FileName.IndexOf(openFileDialog.SafeFileName));
+
+                        //_safeFileName = Path.GetFileName(openFileDialog.FileName);
+                       
+
+                        //resizeImage(600, 600, pathFileName);
 
                         _safeFileName = "Avatar_" + s + ".webp";
 
@@ -231,6 +243,72 @@ namespace FtpLoad
             {
                 MessageBox.Show(ex.Message + "\r\nIn WebPExample.buttonInfo_Click", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        public void resizeImage(int newWidth, int newHeight, string stPhotoPath)
+        {
+            //string _safeFileName = "";
+            //string _onlyFilePath = "";
+            //string lossyFileName = Environment.CurrentDirectory + "\\Temp\\" + _safeFileName;
+            //System.IO.File.Copy(stPhotoPath, lossyFileName, true);
+            
+            Image imgPhoto = Image.FromFile(stPhotoPath); 
+
+            int sourceWidth = imgPhoto.Width;
+            int sourceHeight = imgPhoto.Height;
+
+            //Consider vertical pics
+            if (sourceWidth < sourceHeight)
+            {
+                int buff = newWidth;
+
+                newWidth = newHeight;
+                newHeight = buff;
+            }
+
+            int sourceX = 0, sourceY = 0, destX = 0, destY = 0;
+            float nPercent = 0, nPercentW = 0, nPercentH = 0;
+
+            nPercentW = ((float)newWidth / (float)sourceWidth);
+            nPercentH = ((float)newHeight / (float)sourceHeight);
+            if (nPercentH < nPercentW)
+            {
+                nPercent = nPercentH;
+                destX = System.Convert.ToInt16((newWidth -
+                                                (sourceWidth * nPercent)) / 2);
+            }
+            else
+            {
+                nPercent = nPercentW;
+                destY = System.Convert.ToInt16((newHeight -
+                                                (sourceHeight * nPercent)) / 2);
+            }
+
+            int destWidth = (int)(sourceWidth * nPercent);
+            int destHeight = (int)(sourceHeight * nPercent);
+
+
+            Bitmap bmPhoto = new Bitmap(newWidth, newHeight,
+                PixelFormat.Format24bppRgb);
+
+            bmPhoto.SetResolution(imgPhoto.HorizontalResolution,
+                imgPhoto.VerticalResolution);
+
+            Graphics grPhoto = Graphics.FromImage(bmPhoto);
+            grPhoto.Clear(Color.Black);
+            grPhoto.InterpolationMode =
+                System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+
+            grPhoto.DrawImage(imgPhoto,
+                new Rectangle(destX, destY, destWidth, destHeight),
+                new Rectangle(sourceX, sourceY, sourceWidth, sourceHeight),
+                GraphicsUnit.Pixel);
+            bmPhoto.Save(Environment.CurrentDirectory + "\\Temp\\" + _safeFileName);
+
+            grPhoto.Dispose();
+            imgPhoto.Dispose();
+
+            // return bmPhoto;
         }
     }
 }

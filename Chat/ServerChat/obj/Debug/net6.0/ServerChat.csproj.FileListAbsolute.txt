@@ -1,0 +1,15 @@
+G:\VSProject\Net\Chat\ServerChat\bin\Debug\net6.0\ServerChat.exe
+G:\VSProject\Net\Chat\ServerChat\bin\Debug\net6.0\ServerChat.deps.json
+G:\VSProject\Net\Chat\ServerChat\bin\Debug\net6.0\ServerChat.runtimeconfig.json
+G:\VSProject\Net\Chat\ServerChat\bin\Debug\net6.0\ServerChat.dll
+G:\VSProject\Net\Chat\ServerChat\bin\Debug\net6.0\ServerChat.pdb
+G:\VSProject\Net\Chat\ServerChat\obj\Debug\net6.0\ServerChat.csproj.AssemblyReference.cache
+G:\VSProject\Net\Chat\ServerChat\obj\Debug\net6.0\ServerChat.GeneratedMSBuildEditorConfig.editorconfig
+G:\VSProject\Net\Chat\ServerChat\obj\Debug\net6.0\ServerChat.AssemblyInfoInputs.cache
+G:\VSProject\Net\Chat\ServerChat\obj\Debug\net6.0\ServerChat.AssemblyInfo.cs
+G:\VSProject\Net\Chat\ServerChat\obj\Debug\net6.0\ServerChat.csproj.CoreCompileInputs.cache
+G:\VSProject\Net\Chat\ServerChat\obj\Debug\net6.0\ServerChat.dll
+G:\VSProject\Net\Chat\ServerChat\obj\Debug\net6.0\refint\ServerChat.dll
+G:\VSProject\Net\Chat\ServerChat\obj\Debug\net6.0\ServerChat.pdb
+G:\VSProject\Net\Chat\ServerChat\obj\Debug\net6.0\ServerChat.genruntimeconfig.cache
+G:\VSProject\Net\Chat\ServerChat\obj\Debug\net6.0\ref\ServerChat.dll
