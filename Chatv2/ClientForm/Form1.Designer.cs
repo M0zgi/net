@@ -101,6 +101,7 @@
             this.boxMeseage.Size = new System.Drawing.Size(509, 96);
             this.boxMeseage.TabIndex = 2;
             this.boxMeseage.Text = "";
+            this.boxMeseage.KeyUp += new System.Windows.Forms.KeyEventHandler(this.boxMeseage_KeyUp);
             // 
             // btn_send
             // 

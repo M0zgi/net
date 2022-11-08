@@ -60,17 +60,19 @@ namespace ServerChat.Entities
                                    // Console.WriteLine(auth.Password);
                                     Name = auth.Username;
                                     Server.NewUser(this);
-                                    
                                     break;
+
                                 case RequestCommands.SendMsg:
                                     SendMessage msg = (SendMessage)request.Body;
                                     Message = msg.Message;
                                     Server.UserConnectedSend(this);
                                     break;
-                                    //bool check;
-                                    //User user = new User();
-                                    //user.Email = auth.Email;
-                                    //user.Password = auth.Password;
+
+                                case RequestCommands.Ping:
+                                    TestServer ping = (TestServer) request.Body;
+                                    Console.WriteLine(ping.msg);
+                                    SendOk();
+                                    break;
                                     
                                 default:
                                     Console.WriteLine(" No Command ");
@@ -150,6 +152,45 @@ namespace ServerChat.Entities
                     Console.WriteLine(ex.Message);
                 }
             }
+        }
+
+        private void SendOk()
+        {
+            Response response = new Response();
+
+            response.Status = ResponseStatus.OK;
+            string message = "Привет клиент!";
+            TestServer pingResp = new TestServer();
+                                    
+            //Ping pingResp = (Ping) response.Body;
+            pingResp.msg = message;
+            response.Body = pingResp;
+            BinaryFormatter formatter = new BinaryFormatter();
+                                    
+            using (var ms = new MemoryStream())
+            {
+                try
+                {
+                    formatter.Serialize(ms, response);
+                    byte[] r = ms.ToArray();
+
+                    // Отправка сущности на сервер
+                    _userHandle.Send(r);
+                    _userHandle.BeginDisconnect(false, new AsyncCallback(DisconnectCallBack), _userHandle);
+                } 
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+        }
+
+        public void DisconnectCallBack(IAsyncResult ar)
+        {
+            Socket handler = ar.AsyncState as Socket;
+            handler.EndDisconnect(ar);
+            Console.WriteLine("Connection closed");
+            //_userHandle.EndDisconnect(ar);
         }
     }
 }

@@ -25,34 +25,27 @@ namespace ClientForm.Entities
 
         private Request request;
 
+        private ManualResetEvent acceptEvent = new ManualResetEvent(false);
+        private string? clientMesseage;
+
+
         public ClientConnect(int port, string ip)
         {
             this.port = port;
             this.ip = ip;
         }
 
-        Socket client_socket;
+        Socket client_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-        public void ConnectAsync(string name, string pass, RequestCommands requestform)
+        public void ConnectAsync(string msg, RequestCommands requestform)
         {
-            IPEndPoint ipPoint = new IPEndPoint(IPAddress.Parse(ip), this.port);
-
-            client_socket = new Socket(AddressFamily.InterNetwork, 
-                SocketType.Stream, ProtocolType.Tcp);
-
+            acceptEvent.Reset();
+            clientMesseage = msg;
             request = new Request();
             request.Command = requestform;
-            _name = name;
-            _password = pass;
-
-            try
-            {
-                client_socket.BeginConnect(ipPoint, new AsyncCallback(ConnectCallBack), client_socket);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            IPEndPoint ipPoint = new IPEndPoint(IPAddress.Parse(ip), this.port);
+            this.client_socket.BeginConnect(ipPoint, new AsyncCallback(ConnectCallBack), this.client_socket);
+            acceptEvent.WaitOne();
         }
 
         public void ConnectCallBack(IAsyncResult ar)
@@ -65,21 +58,22 @@ namespace ClientForm.Entities
                 switch (request.Command)
                 {
                     case RequestCommands.Ping:
-                        //ReauestPing();
+                        ReauestPing();
+                        //Disconnect();
                         break;
-                    case RequestCommands.Auth:
-                        AuthConnect();
-                        break;
-                    //case RequestCommands.Zip:
-                       // ReauestZip();
-                        break;
+                    //case RequestCommands.Auth:
+                    //    AuthConnect();
+                    //    break;
+                    ////case RequestCommands.Zip:
+                    //   // ReauestZip();
+                    //    break;
                     default:
                         MessageBox.Show(" No Command ");
                         break;
                 }
 
                 // закрываем сокет
-               // Disconnect();
+              Disconnect();
             }
             catch (Exception ex)
             {
@@ -88,36 +82,43 @@ namespace ClientForm.Entities
             }
         }
 
-
-        public void AuthConnect()
+        public void Disconnect()
         {
-            Auth auth = new Auth();
-            auth.Username = _name;
-            auth.Password = _password;
+            client_socket.Shutdown(SocketShutdown.Both);
+            this.client_socket.BeginDisconnect(true, new AsyncCallback(DisconnectCallBack), this.client_socket);
+            acceptEvent.WaitOne();
+        }
 
-            try
+        private void DisconnectCallBack(IAsyncResult ar)
+        {
+            Socket handler = ar.AsyncState as Socket;
+            handler = client_socket;
+            handler.EndDisconnect(ar);
+            acceptEvent.Set();
+            //MessageBox.Show("Connection closed");
+        }
+
+         private void ReauestPing()
+        {
+            TestServer ping = new TestServer();
+            ping.msg = clientMesseage;
+            request.Body = ping;
+            BinaryFormatter formatter = new BinaryFormatter();
+
+            using (var ms = new MemoryStream())
             {
-                request.Body = auth;
-                BinaryFormatter formatter = new BinaryFormatter();
-                using (var ms = new MemoryStream())
+                try
                 {
-                    try
-                    {
-                        formatter.Serialize(ms, request);
-                        byte[] r = ms.ToArray();
+                    formatter.Serialize(ms, request);
+                    byte[] r = ms.ToArray();
 
-                        // Отправка сущности на сервер
-                        client_socket.Send(r);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message);
-                    }
+                    // Отправка сущности на сервер
+                    client_socket.Send(r);
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
 
             int bytes = 0; // количество полученных байтов
@@ -129,8 +130,32 @@ namespace ClientForm.Entities
             }
             while (client_socket.Available > 0);
 
+            Response responseping;
 
+            using (MemoryStream ms = new MemoryStream(data))
+            {
+                try
+                {
+                    responseping = (Response)formatter.Deserialize(ms);
+                    switch (responseping.Status)
+                    {
+                        case ResponseStatus.OK:
+                            TestServer pingResp = (TestServer)responseping.Body;
+                            //Console.WriteLine(pingResp.msg);
+                            MessageBox.Show(DateTime.Now.ToShortTimeString() + " от " +
+                                            client_socket.RemoteEndPoint + " получена строка: " + pingResp.msg);
+                            break;
 
+                        default:
+                            MessageBox.Show("Ваш запрос не может быть обработан \nОбратитесь к разрабочтикам.");
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
         }
 
     }

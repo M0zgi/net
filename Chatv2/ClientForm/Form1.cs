@@ -8,6 +8,7 @@ using Lib.Entityes;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace ClientForm
 {
@@ -43,7 +44,8 @@ namespace ClientForm
 
         private void btnTestServer_Click(object sender, EventArgs e)
         {
-
+            client = new ClientConnect(Convert.ToInt32(num_Port.Value), tb_IP.Text);
+            client.ConnectAsync("Привет сервер", RequestCommands.Ping);
         }
 
         private void btn_SigiIn_Click(object sender, EventArgs e)
@@ -246,6 +248,21 @@ namespace ClientForm
 
             Send($"{DateTime.Now.ToShortTimeString()} : {msgData}");
             boxMeseage.Text = string.Empty;
+        }
+
+        private void boxMeseage_KeyUp(object sender, KeyEventArgs e)
+        {
+            if(e.KeyData == Keys.Enter)
+            {
+                string msgData = boxMeseage.Text;
+                msgData= Regex.Replace(msgData, @"[\n]", "");
+
+                if (string.IsNullOrEmpty(msgData))
+                    return;
+
+                Send($"{DateTime.Now.ToShortTimeString()} : {msgData}");
+                boxMeseage.Text = string.Empty;
+            }
         }
     }
 }
