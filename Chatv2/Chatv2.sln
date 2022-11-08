@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lib", "Lib\Lib.csproj", "{A549A582-FA7A-4761-8C79-FFB56B4BBBF8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientForm", "ClientForm\ClientForm.csproj", "{CC9162F9-C9CD-4188-B349-7CC5878409E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerChat", "ServerChat\ServerChat.csproj", "{28F0F5ED-CA55-48A5-ADEB-B9B065C3D9D6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A549A582-FA7A-4761-8C79-FFB56B4BBBF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A549A582-FA7A-4761-8C79-FFB56B4BBBF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A549A582-FA7A-4761-8C79-FFB56B4BBBF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A549A582-FA7A-4761-8C79-FFB56B4BBBF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC9162F9-C9CD-4188-B349-7CC5878409E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC9162F9-C9CD-4188-B349-7CC5878409E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC9162F9-C9CD-4188-B349-7CC5878409E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC9162F9-C9CD-4188-B349-7CC5878409E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28F0F5ED-CA55-48A5-ADEB-B9B065C3D9D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28F0F5ED-CA55-48A5-ADEB-B9B065C3D9D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28F0F5ED-CA55-48A5-ADEB-B9B065C3D9D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28F0F5ED-CA55-48A5-ADEB-B9B065C3D9D6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {41DFE034-E0C7-4668-9C9F-4575E793DDE1}
+	EndGlobalSection
+EndGlobal
