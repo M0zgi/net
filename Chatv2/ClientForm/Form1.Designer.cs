@@ -35,18 +35,16 @@
             this.btn_send = new System.Windows.Forms.Button();
             this.Pb_avatar = new System.Windows.Forms.PictureBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.btn_disconnect = new System.Windows.Forms.Button();
             this.btn_btn_SigiUp = new System.Windows.Forms.Button();
             this.btn_SigiIn = new System.Windows.Forms.Button();
-            this.tb_email = new System.Windows.Forms.TextBox();
             this.tb_pass = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.tb_login = new System.Windows.Forms.TextBox();
             this.btnTestServer = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.chatBox = new System.Windows.Forms.RichTextBox();
+            this.lb_userList = new System.Windows.Forms.ListBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_Port)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Pb_avatar)).BeginInit();
@@ -96,6 +94,7 @@
             // 
             // boxMeseage
             // 
+            this.boxMeseage.BackColor = System.Drawing.Color.Yellow;
             this.boxMeseage.Location = new System.Drawing.Point(9, 590);
             this.boxMeseage.Name = "boxMeseage";
             this.boxMeseage.Size = new System.Drawing.Size(509, 96);
@@ -127,12 +126,9 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.btn_disconnect);
             this.groupBox2.Controls.Add(this.btn_btn_SigiUp);
             this.groupBox2.Controls.Add(this.btn_SigiIn);
-            this.groupBox2.Controls.Add(this.tb_email);
             this.groupBox2.Controls.Add(this.tb_pass);
-            this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Controls.Add(this.tb_login);
@@ -143,18 +139,9 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Пользователь";
             // 
-            // btn_disconnect
-            // 
-            this.btn_disconnect.Location = new System.Drawing.Point(67, 178);
-            this.btn_disconnect.Name = "btn_disconnect";
-            this.btn_disconnect.Size = new System.Drawing.Size(176, 23);
-            this.btn_disconnect.TabIndex = 8;
-            this.btn_disconnect.Text = "Выйти";
-            this.btn_disconnect.UseVisualStyleBackColor = true;
-            // 
             // btn_btn_SigiUp
             // 
-            this.btn_btn_SigiUp.Location = new System.Drawing.Point(156, 117);
+            this.btn_btn_SigiUp.Location = new System.Drawing.Point(156, 84);
             this.btn_btn_SigiUp.Name = "btn_btn_SigiUp";
             this.btn_btn_SigiUp.Size = new System.Drawing.Size(87, 38);
             this.btn_btn_SigiUp.TabIndex = 7;
@@ -163,7 +150,7 @@
             // 
             // btn_SigiIn
             // 
-            this.btn_SigiIn.Location = new System.Drawing.Point(66, 117);
+            this.btn_SigiIn.Location = new System.Drawing.Point(66, 84);
             this.btn_SigiIn.Name = "btn_SigiIn";
             this.btn_SigiIn.Size = new System.Drawing.Size(87, 38);
             this.btn_SigiIn.TabIndex = 6;
@@ -171,28 +158,12 @@
             this.btn_SigiIn.UseVisualStyleBackColor = true;
             this.btn_SigiIn.Click += new System.EventHandler(this.btn_SigiIn_Click);
             // 
-            // tb_email
-            // 
-            this.tb_email.Location = new System.Drawing.Point(66, 84);
-            this.tb_email.Name = "tb_email";
-            this.tb_email.Size = new System.Drawing.Size(177, 23);
-            this.tb_email.TabIndex = 5;
-            // 
             // tb_pass
             // 
             this.tb_pass.Location = new System.Drawing.Point(66, 52);
             this.tb_pass.Name = "tb_pass";
             this.tb_pass.Size = new System.Drawing.Size(177, 23);
             this.tb_pass.TabIndex = 4;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 88);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(41, 15);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "E-mail";
             // 
             // label2
             // 
@@ -218,6 +189,7 @@
             this.tb_login.Name = "tb_login";
             this.tb_login.Size = new System.Drawing.Size(177, 23);
             this.tb_login.TabIndex = 0;
+            this.tb_login.TextChanged += new System.EventHandler(this.tb_login_TextChanged);
             // 
             // btnTestServer
             // 
@@ -240,17 +212,30 @@
             // 
             // chatBox
             // 
+            this.chatBox.BackColor = System.Drawing.Color.DodgerBlue;
             this.chatBox.Location = new System.Drawing.Point(12, 233);
             this.chatBox.Name = "chatBox";
+            this.chatBox.ReadOnly = true;
             this.chatBox.Size = new System.Drawing.Size(506, 351);
             this.chatBox.TabIndex = 8;
             this.chatBox.Text = "";
+            this.chatBox.TextChanged += new System.EventHandler(this.chatBox_TextChanged);
+            // 
+            // lb_userList
+            // 
+            this.lb_userList.FormattingEnabled = true;
+            this.lb_userList.ItemHeight = 15;
+            this.lb_userList.Location = new System.Drawing.Point(525, 234);
+            this.lb_userList.Name = "lb_userList";
+            this.lb_userList.Size = new System.Drawing.Size(100, 349);
+            this.lb_userList.TabIndex = 9;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(636, 715);
+            this.ClientSize = new System.Drawing.Size(634, 715);
+            this.Controls.Add(this.lb_userList);
             this.Controls.Add(this.chatBox);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.btnTestServer);
@@ -282,17 +267,15 @@
         private Button btn_send;
         private PictureBox Pb_avatar;
         private GroupBox groupBox2;
-        private Button btn_disconnect;
         private Button btn_btn_SigiUp;
         private Button btn_SigiIn;
-        private TextBox tb_email;
         private TextBox tb_pass;
-        private Label label3;
         private Label label2;
         private Label label1;
         private TextBox tb_login;
         private Button btnTestServer;
         private Button button2;
         private RichTextBox chatBox;
+        private ListBox lb_userList;
     }
 }

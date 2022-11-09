@@ -37,9 +37,9 @@ namespace ServerChat.Entities
 
         public static event UserEvent UserConnected = (Username) =>
         {
-            Console.WriteLine($"Пользователь {Username} вошел в чат.");
+            Console.WriteLine($"Пользователь {Username}: вошел в чат.");
             CountUsers++;
-            SendGlobalMessage($"Пользователь {Username} подключился к чату.");
+            SendGlobalMessage($"{Username}: подключился к чату.");
             //SendUserList();
         };
         public static event UserEvent UserDisconnected = (Username) =>
@@ -78,6 +78,11 @@ namespace ServerChat.Entities
 
         public static void UserConnectedSend(ServerUser usr)
         {
+            if (usr.Message == "вышел из чата")
+            {
+                EndUser(usr);
+            }
+
             SendMsg(usr.Name, usr.Message);
         }
 

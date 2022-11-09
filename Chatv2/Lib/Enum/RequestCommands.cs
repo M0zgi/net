@@ -11,6 +11,7 @@ namespace Lib.Enum
         Auth,
         Ping,
         SendMsg,
+        Exit,
         Create,
         Read,
         Update,

@@ -22,6 +22,8 @@ namespace ServerChat.Entities
 
         private Socket _userHandle;
         private Task _userThread;
+
+        private ManualResetEvent acceptEvent = new ManualResetEvent(false);
         public ServerUser(Socket handle)
         {
             _userHandle = handle;
@@ -47,44 +49,72 @@ namespace ServerChat.Entities
                     BinaryFormatter formatter = new BinaryFormatter();
                     Request request;
 
-                    using (MemoryStream ms = new MemoryStream(data))
+                    try
                     {
-                        try
+                        using (MemoryStream ms = new MemoryStream(data))
                         {
-                            request = (Request)formatter.Deserialize(ms);
-                            switch (request.Command)
+                            try
                             {
-                                case RequestCommands.Auth:
-                                    Auth auth = (Auth)request.Body;
-                                   // Console.WriteLine(auth.Email);
-                                   // Console.WriteLine(auth.Password);
-                                    Name = auth.Username;
-                                    Server.NewUser(this);
-                                    break;
+                                request = (Request)formatter.Deserialize(ms);
+                                switch (request.Command)
+                                {
+                                    case RequestCommands.Auth:
+                                        Auth auth = (Auth)request.Body;
+                                        if (auth.msg != "сервер я отключаюсь")
+                                        {
+                                            Name = auth.Username;
+                                            Server.NewUser(this);
+                                        }
 
-                                case RequestCommands.SendMsg:
-                                    SendMessage msg = (SendMessage)request.Body;
-                                    Message = msg.Message;
-                                    Server.UserConnectedSend(this);
-                                    break;
+                                        //else if (auth.msg != "Connection closed!")
+                                        //{
+                                        //    Console.WriteLine(auth.msg);
+                                        //}
 
-                                case RequestCommands.Ping:
-                                    TestServer ping = (TestServer) request.Body;
-                                    Console.WriteLine(ping.msg);
-                                    SendOk();
-                                    break;
-                                    
-                                default:
-                                    Console.WriteLine(" No Command ");
-                                    break;
+                                        else
+                                        {
+                                            Server.EndUser(this);
+                                        }
+                                        // Console.WriteLine(auth.Email);
+                                        // Console.WriteLine(auth.Password);
+
+                                        break;
+
+                                    case RequestCommands.SendMsg:
+                                        SendMessage msg = (SendMessage)request.Body;
+                                        Message = msg.Message;
+                                        Server.UserConnectedSend(this);
+                                        break;
+
+                                    case RequestCommands.Ping:
+                                        TestServer ping = (TestServer)request.Body;
+                                        Console.WriteLine(ping.msg);
+                                        SendOk();
+                                        break;
+                                    //case RequestCommands.Exit:
+                                    //    Server.EndUser(this);
+                                    //    break;
+
+                                    default:
+                                        Console.WriteLine(" No Command ");
+                                        break;
+                                }
                             }
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex.Message);
+                                //Server.EndUser(this);
+                            }
 
+                        }
                     }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                        //throw;
+                    }
+
+
                 }
             }
             catch { Server.EndUser(this); }
@@ -92,12 +122,44 @@ namespace ServerChat.Entities
 
         public void End()
         {
-            try
-            {
-                _userHandle.Close();
-            }
-            catch { }
 
+            //try
+            //{
+            //    _userHandle.BeginDisconnect(false, new AsyncCallback(DisconnectCallBack), _userHandle);
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine(ex);
+            //}
+            //acceptEvent.WaitOne();
+
+            Response response = new Response();
+
+            response.Status = ResponseStatus.OK;
+            string message = "Пока :)!";
+            Auth Resp = new Auth();
+
+            //Ping pingResp = (Ping) response.Body;
+            Resp.msg = message;
+            response.Body = Resp;
+            BinaryFormatter formatter = new BinaryFormatter();
+
+            using (var ms = new MemoryStream())
+            {
+                try
+                {
+                    formatter.Serialize(ms, response);
+                    byte[] r = ms.ToArray();
+
+                    // Отправка сущности на сервер
+                    _userHandle.Send(r);
+                    _userHandle.BeginDisconnect(false, new AsyncCallback(DisconnectCallBack), _userHandle);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
         }
 
         public void SendMessage(string content)
@@ -119,7 +181,7 @@ namespace ServerChat.Entities
                     // Отправка сущности на сервер
                     _userHandle.Send(r);
                     //socketOk.BeginDisconnect(false, new AsyncCallback(DisconnectCallBack), socketOk);
-                } 
+                }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
@@ -146,7 +208,7 @@ namespace ServerChat.Entities
                     // Отправка сущности на сервер
                     _userHandle.Send(r);
                     //socketOk.BeginDisconnect(false, new AsyncCallback(DisconnectCallBack), socketOk);
-                } 
+                }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
@@ -161,12 +223,12 @@ namespace ServerChat.Entities
             response.Status = ResponseStatus.OK;
             string message = "Привет клиент!";
             TestServer pingResp = new TestServer();
-                                    
+
             //Ping pingResp = (Ping) response.Body;
             pingResp.msg = message;
             response.Body = pingResp;
             BinaryFormatter formatter = new BinaryFormatter();
-                                    
+
             using (var ms = new MemoryStream())
             {
                 try
@@ -177,7 +239,7 @@ namespace ServerChat.Entities
                     // Отправка сущности на сервер
                     _userHandle.Send(r);
                     _userHandle.BeginDisconnect(false, new AsyncCallback(DisconnectCallBack), _userHandle);
-                } 
+                }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
@@ -189,7 +251,8 @@ namespace ServerChat.Entities
         {
             Socket handler = ar.AsyncState as Socket;
             handler.EndDisconnect(ar);
-            Console.WriteLine("Connection closed");
+            //Console.WriteLine("Connection closed");
+            acceptEvent.Set();
             //_userHandle.EndDisconnect(ar);
         }
     }

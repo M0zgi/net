@@ -28,6 +28,7 @@ namespace ClientForm.Entities
         private ManualResetEvent acceptEvent = new ManualResetEvent(false);
         private string? clientMesseage;
 
+        private bool isSrvOnline = false;
 
         public ClientConnect(int port, string ip)
         {
@@ -39,13 +40,13 @@ namespace ClientForm.Entities
 
         public void ConnectAsync(string msg, RequestCommands requestform)
         {
-            acceptEvent.Reset();
+            //acceptEvent.Reset();
             clientMesseage = msg;
             request = new Request();
             request.Command = requestform;
             IPEndPoint ipPoint = new IPEndPoint(IPAddress.Parse(ip), this.port);
             this.client_socket.BeginConnect(ipPoint, new AsyncCallback(ConnectCallBack), this.client_socket);
-            acceptEvent.WaitOne();
+            //acceptEvent.WaitOne();
         }
 
         public void ConnectCallBack(IAsyncResult ar)
@@ -73,7 +74,7 @@ namespace ClientForm.Entities
                 }
 
                 // закрываем сокет
-              Disconnect();
+                Disconnect();
             }
             catch (Exception ex)
             {
@@ -85,8 +86,8 @@ namespace ClientForm.Entities
         public void Disconnect()
         {
             client_socket.Shutdown(SocketShutdown.Both);
-            this.client_socket.BeginDisconnect(true, new AsyncCallback(DisconnectCallBack), this.client_socket);
-            acceptEvent.WaitOne();
+            this.client_socket.BeginDisconnect(false, new AsyncCallback(DisconnectCallBack), this.client_socket);
+            
         }
 
         private void DisconnectCallBack(IAsyncResult ar)
@@ -98,8 +99,9 @@ namespace ClientForm.Entities
             //MessageBox.Show("Connection closed");
         }
 
-         private void ReauestPing()
+        private void ReauestPing()
         {
+
             TestServer ping = new TestServer();
             ping.msg = clientMesseage;
             request.Body = ping;
@@ -114,10 +116,12 @@ namespace ClientForm.Entities
 
                     // Отправка сущности на сервер
                     client_socket.Send(r);
+                    isSrvOnline = true;
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
+                    isSrvOnline = false;
                 }
             }
 
@@ -144,6 +148,7 @@ namespace ClientForm.Entities
                             //Console.WriteLine(pingResp.msg);
                             MessageBox.Show(DateTime.Now.ToShortTimeString() + " от " +
                                             client_socket.RemoteEndPoint + " получена строка: " + pingResp.msg);
+                            
                             break;
 
                         default:
