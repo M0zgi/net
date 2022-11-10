@@ -9,6 +9,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Microsoft.VisualBasic.ApplicationServices;
+using System.Drawing.Imaging;
 
 namespace ClientForm
 {
@@ -29,6 +31,11 @@ namespace ClientForm
 
         private IPEndPoint ipPoint;
 
+        private static List<string> users;
+
+        string _fullPath = "";
+        string _safeFileName = "";
+
 
         //Auth auth;
 
@@ -48,6 +55,7 @@ namespace ClientForm
             boxMeseage.Enabled = false;
             btn_send.Enabled = false;
             btn_SigiIn.Enabled = false;
+            users   = new List<string>();
         }
 
         private void btnTestServer_Click(object sender, EventArgs e)
@@ -68,13 +76,33 @@ namespace ClientForm
                 tb_pass.Enabled = false;
                 boxMeseage.Enabled = true;
                 btn_send.Enabled = true;
+
+                //lb_userList.Items.Clear();
+                ////nicname = name.Remove(indexLastOfChar);
+                ////lb_userList.Items.Add(nicname);
+
+                //foreach (var user in users)
+                //{
+                //    lb_userList.Items.Add(user);
+                //}
             }
 
             else
             {
+                //lb_userList.Items.Clear();
+                //string username = tb_login.Text;
+
+                //users.Remove(username);
+
+                //foreach (var user in users)
+                //{
+                //    lb_userList.Items.Add(user);
+                //}
+                
                 //ConnectAsync(RequestCommands.Exit);
                 IsConnected = false;
                 auth.msg = "сервер я отключаюсь";
+                //
                 try
                 {
                     request.Body = auth;
@@ -107,7 +135,7 @@ namespace ClientForm
                 IsConnected = false;
                 tb_login.Enabled = true;
                 tb_pass.Enabled = true;
-
+                lb_userList.Items.Clear();
                 //btn_SigiIn.Enabled = false;
             }
         }
@@ -134,6 +162,8 @@ namespace ClientForm
 
                     // Отправка сущности на сервер
                     client_socket.Send(r);
+                    Thread.Sleep(500);
+                    
                     client_socket.Shutdown(SocketShutdown.Both);
                     client_socket.BeginDisconnect(true, new AsyncCallback(DisconnectCallback), client_socket);
                 }
@@ -283,7 +313,7 @@ namespace ClientForm
                         {
                             case ResponseStatus.OK:
                                 authResponse = (Auth)response.Body;
-                                AddUserList(authResponse.msg);
+                                //AddUserList(authResponse.msg);
                                 AddMessage(authResponse.msg);
                                 
                                 //btn_SigiIn.Enabled = false;
@@ -292,6 +322,11 @@ namespace ClientForm
                             case ResponseStatus.MSG:
                                 sendMessage = (SendMessage)response.Body;
                                 AddMessage(sendMessage.Message);
+                                break;
+
+                            case ResponseStatus.NewUser:
+                                sendMessage = (SendMessage)response.Body;
+                                AddUserList(sendMessage.Message);
                                 break;
 
                             case ResponseStatus.NOT_FOUND:
@@ -459,22 +494,243 @@ namespace ClientForm
 
         private void AddUserList(string name)
         {
-            if (InvokeRequired)
+            string[] Users = name.Split(',');
+            int countUsers = Users.Length;
+            lb_userList.Invoke((MethodInvoker)delegate { lb_userList.Items.Clear(); });
+            for(int j = 0;j < countUsers;j++)
             {
-                Invoke(_addUser, name);
-                return;
+                lb_userList.Invoke((MethodInvoker)delegate { lb_userList.Items.Add(Users[j]) ; });
             }
-            char ch = ':';
+        }
 
-            string nicname = " ";
+        private void btn_loadAvatar_Click(object sender, EventArgs e)
+        {
+            LoadImage();
+            ConvertWebp();
 
-            int indexLastOfChar = name.LastIndexOf(ch);
-
-            if (indexLastOfChar > 1)
+            try
             {
-                nicname = name.Remove(indexLastOfChar);
-                lb_userList.Items.Add(nicname);
+                string fullPath = _fullPath;
+                string fileName = _safeFileName + ".webp";
+
+                // Создаем объект FtpWebRequest - он указывает на файл, который будет создан
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://" + "127.0.0.1" + ":21" + "/uploads/" + fileName);
+                request.Credentials = new NetworkCredential("adm", "11111");
+
+                // устанавливаем метод на загрузку файлов
+
+                request.Method = WebRequestMethods.Ftp.UploadFile;
+
+                // создаем поток для загрузки файла
+                FileStream fs = new FileStream(fullPath, FileMode.Open);
+                byte[] fileContents = new byte[fs.Length];
+                fs.Read(fileContents, 0, fileContents.Length);
+                fs.Close();
+                request.ContentLength = fileContents.Length;
+
+                // пишем считанный в массив байтов файл в выходной поток
+                Stream requestStream = request.GetRequestStream();
+                requestStream.Write(fileContents, 0, fileContents.Length);
+                requestStream.Close();
+
+                // получаем ответ от сервера в виде объекта FtpWebResponse
+                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+
+
+                response.Close();
+
+                if (Path.GetExtension("http://127.0.0.1/uploads/" + fileName) == ".webp")
+                {
+                    using (WebP webp = new WebP())
+                        pictureBoxAvatar.Image = webp.Load("http://127.0.0.1/uploads/" + fileName);
+                }
+                else
+                {
+
+                    pictureBoxAvatar.Image = Image.FromFile("http://127.0.0.1/uploads/" + fileName);
+                }
+                pictureBoxAvatar.SizeMode = PictureBoxSizeMode.Zoom; 
+
+                //pictureBoxAvatar.Load("http://127.0.0.1/uploads/" + fileName);
+
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void LoadImage()
+        {
+            try
+            {
+                using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                {
+                    openFileDialog.Filter = "Image files (*.webp, *.png, *.tif, *.tiff, *.jpg)|*.webp;*.png;*.tif;*.tiff;*.jpg";
+                    openFileDialog.FileName = "";
+                    if (openFileDialog.ShowDialog() == DialogResult.OK) {
+                        
+                        string pathFileName = openFileDialog.FileName;
+                        string s = DateTime.Now.ToString("yyyyMMddhhmmss");
+
+                        //_onlyFilePath =
+                        //    openFileDialog.FileName.Remove(
+                        //        openFileDialog.FileName.IndexOf(openFileDialog.SafeFileName));
+
+                        _safeFileName = Path.GetFileName(openFileDialog.FileName);
+
+
+                        resizeImage(600, 600, pathFileName);
+
+                       //_safeFileName = "Avatar_" + s;
+
+                        if (Path.GetExtension(pathFileName) == ".webp")
+                        {
+                            using (WebP webp = new WebP())
+                                pictureBoxAvatar.Image = webp.Load(pathFileName);
+                        }
+                        else
+                        {
+                            pictureBoxAvatar.Image = Image.FromFile(Environment.CurrentDirectory + "\\Temp\\" + _safeFileName);
+                        }
+                            
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message + "\r\nIn WebPExample.buttonLoad_Click", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ConvertWebp()
+        {
+            Control.CheckForIllegalCrossThreadCalls = false;
+            byte[] rawWebP;
+            
+            try
+            {
+                if (this.pictureBoxAvatar.Image == null)
+                    MessageBox.Show("Please, load an image first");
+
+                //get the picture box image
+                Bitmap bmp = (Bitmap)pictureBoxAvatar.Image;
+
+                //Test simple encode in lossly mode in memory with quality 75
+                string lossyFileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _safeFileName + ".webp");
+                _fullPath = lossyFileName;
+                using (WebP webp = new WebP())
+                    rawWebP = webp.EncodeLossy(bmp, 75);
+
+
+                File.WriteAllBytes(lossyFileName, rawWebP);
+                //MessageBox.Show("Made " + lossyFileName, "Simple lossy");
+
+                ////Test simple encode in lossless mode in memory
+                //string simpleLosslessFileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SimpleLossless.webp");
+                //using (WebP webp = new WebP())
+                //    rawWebP = webp.EncodeLossless(bmp);
+                //File.WriteAllBytes(simpleLosslessFileName, rawWebP);
+                //MessageBox.Show("Made " + simpleLosslessFileName, "Simple lossless");
+
+                ////Test encode in lossly mode in memory with quality 75 and speed 9
+                //string advanceLossyFileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AdvanceLossy.webp");
+                //using (WebP webp = new WebP())
+                //    rawWebP = webp.EncodeLossy(bmp, 71, 9, true);
+                //File.WriteAllBytes(advanceLossyFileName, rawWebP);
+                //MessageBox.Show("Made " + advanceLossyFileName, "Advance lossy");
+
+                ////Test advance encode lossless mode in memory with speed 9
+                //string losslessFileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AdvanceLossless.webp");
+                //using (WebP webp = new WebP())
+                //    rawWebP = webp.EncodeLossless(bmp, 9);
+                //File.WriteAllBytes(losslessFileName, rawWebP);
+                //MessageBox.Show("Made " + losslessFileName, "Advance lossless");
+
+                //Test encode near lossless mode in memory with quality 40 and speed 9
+                // quality 100: No-loss (bit-stream same as -lossless).
+                // quality 80: Very very high PSNR (around 54dB) and gets an additional 5-10% size reduction over WebP-lossless image.
+                // quality 60: Very high PSNR (around 48dB) and gets an additional 20%-25% size reduction over WebP-lossless image.
+                // quality 40: High PSNR (around 42dB) and gets an additional 30-35% size reduction over WebP-lossless image.
+                // quality 20 (and below): Moderate PSNR (around 36dB) and gets an additional 40-50% size reduction over WebP-lossless image.
+                //string nearLosslessFileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "NearLossless.webp");
+                //using (WebP webp = new WebP())
+                //    rawWebP = webp.EncodeNearLossless(bmp, 40, 9);
+                //File.WriteAllBytes(nearLosslessFileName, rawWebP);
+                //MessageBox.Show("Made " + nearLosslessFileName, "Near lossless");
+
+                //MessageBox.Show("End of Test");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message + "\r\nIn WebPExample.buttonSave_Click", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public void resizeImage(int newWidth, int newHeight, string stPhotoPath)
+        {
+            //string _safeFileName = "";
+            //string _onlyFilePath = "";
+            //string lossyFileName = Environment.CurrentDirectory + "\\Temp\\" + _safeFileName;
+            //System.IO.File.Copy(stPhotoPath, lossyFileName, true);
+            
+            Image imgPhoto = Image.FromFile(stPhotoPath); 
+
+            int sourceWidth = imgPhoto.Width;
+            int sourceHeight = imgPhoto.Height;
+
+            //Consider vertical pics
+            if (sourceWidth < sourceHeight)
+            {
+                int buff = newWidth;
+
+                newWidth = newHeight;
+                newHeight = buff;
+            }
+
+            int sourceX = 0, sourceY = 0, destX = 0, destY = 0;
+            float nPercent = 0, nPercentW = 0, nPercentH = 0;
+
+            nPercentW = ((float)newWidth / (float)sourceWidth);
+            nPercentH = ((float)newHeight / (float)sourceHeight);
+            if (nPercentH < nPercentW)
+            {
+                nPercent = nPercentH;
+                destX = System.Convert.ToInt16((newWidth -
+                                                (sourceWidth * nPercent)) / 2);
+            }
+            else
+            {
+                nPercent = nPercentW;
+                destY = System.Convert.ToInt16((newHeight -
+                                                (sourceHeight * nPercent)) / 2);
+            }
+
+            int destWidth = (int)(sourceWidth * nPercent);
+            int destHeight = (int)(sourceHeight * nPercent);
+
+
+            Bitmap bmPhoto = new Bitmap(newWidth, newHeight,
+                PixelFormat.Format24bppRgb);
+
+            bmPhoto.SetResolution(imgPhoto.HorizontalResolution,
+                imgPhoto.VerticalResolution);
+
+            Graphics grPhoto = Graphics.FromImage(bmPhoto);
+            grPhoto.Clear(Color.Black);
+            grPhoto.InterpolationMode =
+                System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+
+            grPhoto.DrawImage(imgPhoto,
+                new Rectangle(destX, destY, destWidth, destHeight),
+                new Rectangle(sourceX, sourceY, sourceWidth, sourceHeight),
+                GraphicsUnit.Pixel);
+            bmPhoto.Save(Environment.CurrentDirectory + "\\Temp\\" + _safeFileName);
+
+            grPhoto.Dispose();
+            imgPhoto.Dispose();
+
+            // return bmPhoto;
         }
     }
 

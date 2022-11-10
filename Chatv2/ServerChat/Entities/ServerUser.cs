@@ -60,7 +60,7 @@ namespace ServerChat.Entities
                                 {
                                     case RequestCommands.Auth:
                                         Auth auth = (Auth)request.Body;
-                                        if (auth.msg != "сервер я отключаюсь")
+                                        if (auth.msg != "сервер я отключаюсь" && auth.msg !="Connection closed!")
                                         {
                                             Name = auth.Username;
                                             Server.NewUser(this);
@@ -123,15 +123,7 @@ namespace ServerChat.Entities
         public void End()
         {
 
-            //try
-            //{
-            //    _userHandle.BeginDisconnect(false, new AsyncCallback(DisconnectCallBack), _userHandle);
-            //}
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine(ex);
-            //}
-            //acceptEvent.WaitOne();
+           
 
             Response response = new Response();
 
@@ -153,7 +145,9 @@ namespace ServerChat.Entities
 
                     // Отправка сущности на сервер
                     _userHandle.Send(r);
+                    Thread.Sleep(500);
                     _userHandle.BeginDisconnect(false, new AsyncCallback(DisconnectCallBack), _userHandle);
+                    //_userHandle.Close();
                 }
                 catch (Exception ex)
                 {
@@ -254,6 +248,33 @@ namespace ServerChat.Entities
             //Console.WriteLine("Connection closed");
             acceptEvent.Set();
             //_userHandle.EndDisconnect(ar);
+        }
+
+        public void Send(string Buffer)
+        {
+            Response responseMsg = new Response();
+            responseMsg.Status = ResponseStatus.NewUser;
+            SendMessage msg = new SendMessage();
+            msg.Message = Buffer;
+            responseMsg.Body = msg;
+            BinaryFormatter formatter = new BinaryFormatter();
+
+            using (var ms = new MemoryStream())
+            {
+                try
+                {
+                    formatter.Serialize(ms, responseMsg);
+                    byte[] r = ms.ToArray();
+
+                    // Отправка сущности на сервер
+                    _userHandle.Send(r);
+                    //socketOk.BeginDisconnect(false, new AsyncCallback(DisconnectCallBack), socketOk);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
         }
     }
 }

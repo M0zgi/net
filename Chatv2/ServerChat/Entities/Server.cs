@@ -40,14 +40,14 @@ namespace ServerChat.Entities
             Console.WriteLine($"Пользователь {Username}: вошел в чат.");
             CountUsers++;
             SendGlobalMessage($"{Username}: подключился к чату.");
-            //SendUserList();
+            SendUserList();
         };
         public static event UserEvent UserDisconnected = (Username) =>
         {
-            Console.WriteLine($"Пользователь {Username} покинул чат.");
+            Console.WriteLine($"Пользователь {Username}: покинул чат.");
             CountUsers--;
-            //SendGlobalMessage($"Пользователь {Username} отключился от чата.","Black");
-            //SendUserList();
+            SendGlobalMessage($"Пользователь {Username}: отключился от чата.");
+            SendUserList();
         };
 
         public static event UserEventSend SendMsg = (Username, Messege) =>
@@ -102,5 +102,24 @@ namespace ServerChat.Entities
             }
         }
 
+        public static void SendUserList()
+        {
+            string userList = "";
+
+            for(int i = 0;i < CountUsers;i++)
+            {
+                userList += UserList[i].Name + ",";
+            }
+
+            SendAllUsers(userList);
+        }
+
+        public static void SendAllUsers(string data)
+        {
+            for (int i = 0; i < CountUsers; i++)
+            {
+                UserList[i].Send(data);
+            }
+        }
     }
 }

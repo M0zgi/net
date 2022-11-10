@@ -10,6 +10,7 @@ namespace Lib.Enum
     {
         OK,
         MSG,
+        NewUser,
         ZIP,
         NOT_FOUND,
         AUTH

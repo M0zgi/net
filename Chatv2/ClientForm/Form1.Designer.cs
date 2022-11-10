@@ -33,7 +33,7 @@
             this.tb_IP = new System.Windows.Forms.TextBox();
             this.boxMeseage = new System.Windows.Forms.RichTextBox();
             this.btn_send = new System.Windows.Forms.Button();
-            this.Pb_avatar = new System.Windows.Forms.PictureBox();
+            this.pictureBoxAvatar = new System.Windows.Forms.PictureBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btn_btn_SigiUp = new System.Windows.Forms.Button();
             this.btn_SigiIn = new System.Windows.Forms.Button();
@@ -42,12 +42,12 @@
             this.label1 = new System.Windows.Forms.Label();
             this.tb_login = new System.Windows.Forms.TextBox();
             this.btnTestServer = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btn_loadAvatar = new System.Windows.Forms.Button();
             this.chatBox = new System.Windows.Forms.RichTextBox();
             this.lb_userList = new System.Windows.Forms.ListBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_Port)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Pb_avatar)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxAvatar)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -112,17 +112,17 @@
             this.btn_send.UseVisualStyleBackColor = true;
             this.btn_send.Click += new System.EventHandler(this.btn_send_Click);
             // 
-            // Pb_avatar
+            // pictureBoxAvatar
             // 
-            this.Pb_avatar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Pb_avatar.Image = global::ClientForm.Properties.Resources.max_kukurudziak_qbc3Zmxw0G8_unsplash;
-            this.Pb_avatar.InitialImage = global::ClientForm.Properties.Resources.max_kukurudziak_qbc3Zmxw0G8_unsplash;
-            this.Pb_avatar.Location = new System.Drawing.Point(477, 29);
-            this.Pb_avatar.Name = "Pb_avatar";
-            this.Pb_avatar.Size = new System.Drawing.Size(135, 135);
-            this.Pb_avatar.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.Pb_avatar.TabIndex = 4;
-            this.Pb_avatar.TabStop = false;
+            this.pictureBoxAvatar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBoxAvatar.Image = global::ClientForm.Properties.Resources.max_kukurudziak_qbc3Zmxw0G8_unsplash;
+            this.pictureBoxAvatar.InitialImage = global::ClientForm.Properties.Resources.max_kukurudziak_qbc3Zmxw0G8_unsplash;
+            this.pictureBoxAvatar.Location = new System.Drawing.Point(477, 29);
+            this.pictureBoxAvatar.Name = "pictureBoxAvatar";
+            this.pictureBoxAvatar.Size = new System.Drawing.Size(135, 135);
+            this.pictureBoxAvatar.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBoxAvatar.TabIndex = 4;
+            this.pictureBoxAvatar.TabStop = false;
             // 
             // groupBox2
             // 
@@ -201,14 +201,15 @@
             this.btnTestServer.UseVisualStyleBackColor = true;
             this.btnTestServer.Click += new System.EventHandler(this.btnTestServer_Click);
             // 
-            // button2
+            // btn_loadAvatar
             // 
-            this.button2.Location = new System.Drawing.Point(477, 187);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(135, 23);
-            this.button2.TabIndex = 7;
-            this.button2.Text = "Загрузить аватар";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btn_loadAvatar.Location = new System.Drawing.Point(477, 187);
+            this.btn_loadAvatar.Name = "btn_loadAvatar";
+            this.btn_loadAvatar.Size = new System.Drawing.Size(135, 23);
+            this.btn_loadAvatar.TabIndex = 7;
+            this.btn_loadAvatar.Text = "Загрузить аватар";
+            this.btn_loadAvatar.UseVisualStyleBackColor = true;
+            this.btn_loadAvatar.Click += new System.EventHandler(this.btn_loadAvatar_Click);
             // 
             // chatBox
             // 
@@ -237,9 +238,9 @@
             this.ClientSize = new System.Drawing.Size(634, 715);
             this.Controls.Add(this.lb_userList);
             this.Controls.Add(this.chatBox);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.btn_loadAvatar);
             this.Controls.Add(this.btnTestServer);
-            this.Controls.Add(this.Pb_avatar);
+            this.Controls.Add(this.pictureBoxAvatar);
             this.Controls.Add(this.btn_send);
             this.Controls.Add(this.boxMeseage);
             this.Controls.Add(this.groupBox1);
@@ -251,7 +252,7 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_Port)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Pb_avatar)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxAvatar)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
@@ -265,7 +266,7 @@
         private TextBox tb_IP;
         private RichTextBox boxMeseage;
         private Button btn_send;
-        private PictureBox Pb_avatar;
+        private PictureBox pictureBoxAvatar;
         private GroupBox groupBox2;
         private Button btn_btn_SigiUp;
         private Button btn_SigiIn;
@@ -274,7 +275,7 @@
         private Label label1;
         private TextBox tb_login;
         private Button btnTestServer;
-        private Button button2;
+        private Button btn_loadAvatar;
         private RichTextBox chatBox;
         private ListBox lb_userList;
     }
