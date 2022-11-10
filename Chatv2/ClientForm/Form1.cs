@@ -717,7 +717,7 @@ namespace ClientForm
                 imgPhoto.VerticalResolution);
 
             Graphics grPhoto = Graphics.FromImage(bmPhoto);
-            grPhoto.Clear(Color.Black);
+            grPhoto.Clear(Color.FromArgb(240, 240, 240));
             grPhoto.InterpolationMode =
                 System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 

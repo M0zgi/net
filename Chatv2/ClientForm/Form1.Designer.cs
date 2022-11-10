@@ -114,7 +114,6 @@
             // 
             // pictureBoxAvatar
             // 
-            this.pictureBoxAvatar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBoxAvatar.Image = global::ClientForm.Properties.Resources.max_kukurudziak_qbc3Zmxw0G8_unsplash;
             this.pictureBoxAvatar.InitialImage = global::ClientForm.Properties.Resources.max_kukurudziak_qbc3Zmxw0G8_unsplash;
             this.pictureBoxAvatar.Location = new System.Drawing.Point(477, 29);
