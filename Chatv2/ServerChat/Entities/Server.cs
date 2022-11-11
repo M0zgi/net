@@ -43,8 +43,11 @@ namespace ServerChat.Entities
         {
             Console.WriteLine($"Пользователь {Username}: покинул чат.");
             CountUsers--;
-            SendGlobalMessage($"Пользователь {Username}: отключился от чата.");
-            SendUserList();
+            if (CountUsers > 0)
+            { 
+                SendGlobalMessage($"Пользователь {Username}: отключился от чата.");
+                SendUserList();
+            }
         };
 
         public static event UserEventSend SendMsg = (Username, Messege) =>
