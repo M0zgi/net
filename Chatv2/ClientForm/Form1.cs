@@ -2,14 +2,10 @@ using System.Net;
 using System.Net.Sockets;
 using ClientForm.Entities;
 using Lib.Enum;
-using System.Windows.Forms;
 using Lib;
 using Lib.Entityes;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Xml.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.VisualBasic.ApplicationServices;
 using System.Drawing.Imaging;
 
 namespace ClientForm
@@ -36,13 +32,12 @@ namespace ClientForm
         string _fullPath = "";
         string _safeFileName = "";
 
-
-        //Auth auth;
-
         private ManualResetEvent acceptEvent = new ManualResetEvent(false);
         private delegate void ChatEvent(string content);
+        private delegate void ChatForm();
         private ChatEvent _addMessage;
         private ChatEvent _addUser;
+        private ChatForm _enablechat;
         private bool IsConnected = false;
 
         public Form1()
@@ -52,17 +47,17 @@ namespace ClientForm
             this.MaximizeBox = false;
             _addMessage = new ChatEvent(AddMessage);
             _addUser = new ChatEvent(AddUserList);
+            _enablechat = new ChatForm(EnableChat);
             boxMeseage.Enabled = false;
             btn_send.Enabled = false;
             btn_SigiIn.Enabled = false;
-            users   = new List<string>();
+            users = new List<string>();
         }
 
         private void btnTestServer_Click(object sender, EventArgs e)
         {
             client = new ClientConnect(Convert.ToInt32(num_Port.Value), tb_IP.Text);
             client.ConnectAsync("Привет сервер", RequestCommands.Ping);
-
         }
 
         private void btn_SigiIn_Click(object sender, EventArgs e)
@@ -70,36 +65,10 @@ namespace ClientForm
             if (!IsConnected)
             {
                 ConnectAsync(RequestCommands.Auth);
-                btn_SigiIn.Text = "Выход";
-                IsConnected = true;
-                tb_login.Enabled = false;
-                tb_pass.Enabled = false;
-                boxMeseage.Enabled = true;
-                btn_send.Enabled = true;
-
-                //lb_userList.Items.Clear();
-                ////nicname = name.Remove(indexLastOfChar);
-                ////lb_userList.Items.Add(nicname);
-
-                //foreach (var user in users)
-                //{
-                //    lb_userList.Items.Add(user);
-                //}
             }
 
             else
             {
-                //lb_userList.Items.Clear();
-                //string username = tb_login.Text;
-
-                //users.Remove(username);
-
-                //foreach (var user in users)
-                //{
-                //    lb_userList.Items.Add(user);
-                //}
-                
-                //ConnectAsync(RequestCommands.Exit);
                 IsConnected = false;
                 auth.msg = "сервер я отключаюсь";
                 //
@@ -129,14 +98,11 @@ namespace ClientForm
                     MessageBox.Show(ex.Message);
                 }
 
-                //Disconnect();
-
                 btn_SigiIn.Text = "Войти";
                 IsConnected = false;
                 tb_login.Enabled = true;
                 tb_pass.Enabled = true;
                 lb_userList.Items.Clear();
-                //btn_SigiIn.Enabled = false;
             }
         }
 
@@ -163,7 +129,7 @@ namespace ClientForm
                     // Отправка сущности на сервер
                     client_socket.Send(r);
                     Thread.Sleep(500);
-                    
+
                     client_socket.Shutdown(SocketShutdown.Both);
                     client_socket.BeginDisconnect(true, new AsyncCallback(DisconnectCallback), client_socket);
                 }
@@ -172,9 +138,6 @@ namespace ClientForm
                     Console.WriteLine(ex.Message);
                 }
             }
-
-            //client_socket.Shutdown(SocketShutdown.Both);
-            //client_socket.BeginDisconnect(true, new AsyncCallback(DisconnectCallback), client_socket);
         }
 
         private void DisconnectCallback(IAsyncResult ar)
@@ -192,14 +155,10 @@ namespace ClientForm
             {
 
             }
-
-
         }
 
         private void ConnectAsync(RequestCommands requestform)
         {
-            //acceptEvent.Reset();
-
             ipPoint = new IPEndPoint(IPAddress.Parse(tb_IP.Text), (int)num_Port.Value);
 
             client_socket = new Socket(AddressFamily.InterNetwork,
@@ -216,12 +175,10 @@ namespace ClientForm
             {
                 MessageBox.Show(ex.Message);
             }
-            //acceptEvent.WaitOne();
         }
 
         private void ConnectCallBack(IAsyncResult ar)
         {
-
             try
             {
                 Socket handler = (Socket)ar.AsyncState;
@@ -229,31 +186,35 @@ namespace ClientForm
 
                 switch (request.Command)
                 {
-                    case RequestCommands.Ping:
-                        //ReauestPing();
-                        break;
                     case RequestCommands.Auth:
                         AuthConnect();
                         break;
-                    case RequestCommands.Exit:
-                        // AuthExit();
-                        break;
-                    case RequestCommands.SendMsg:
-                        //ReauestZip();
-                        break;
+
                     default:
                         MessageBox.Show(" No Command ");
                         break;
                 }
-
-                // закрываем сокет
-                // Disconnect();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-                //acceptEvent.Set();
             }
+        }
+
+        private void EnableChat()
+        {
+            if (InvokeRequired)
+            {
+                Invoke(_enablechat);
+                return;
+            }
+
+            btn_SigiIn.Text = "Выход";
+            IsConnected = true;
+            tb_login.Enabled = false;
+            tb_pass.Enabled = false;
+            boxMeseage.Enabled = true;
+            btn_send.Enabled = true;
         }
 
         private Auth auth;
@@ -277,6 +238,7 @@ namespace ClientForm
 
                         // Отправка сущности на сервер
                         client_socket.Send(r);
+                        EnableChat();
                     }
                     catch (Exception ex)
                     {
@@ -313,10 +275,7 @@ namespace ClientForm
                         {
                             case ResponseStatus.OK:
                                 authResponse = (Auth)response.Body;
-                                //AddUserList(authResponse.msg);
                                 AddMessage(authResponse.msg);
-                                
-                                //btn_SigiIn.Enabled = false;
                                 break;
 
                             case ResponseStatus.MSG:
@@ -394,20 +353,6 @@ namespace ClientForm
                 i += nicname.Length;
             }
 
-
-            //i = 0;
-            //while (i <= chatBox.Text.Length - nicname.Length)
-            //{
-            //    i = chatBox.Text.IndexOf(nicname, i);
-            //    if (i < 0) break;
-            //    chatBox.SelectionStart = i;
-            //    chatBox.SelectionLength = nicname.Length;
-            //    chatBox.SelectionColor = Color.Yellow;
-                
-
-            //    i += nicname.Length;
-            //}
-
             if (!IsConnected)
             {
                 boxMeseage.Enabled = false;
@@ -476,7 +421,7 @@ namespace ClientForm
             }
         }
 
-       
+
 
         private void chatBox_TextChanged(object sender, EventArgs e)
         {
@@ -497,9 +442,31 @@ namespace ClientForm
             string[] Users = name.Split(',');
             int countUsers = Users.Length;
             lb_userList.Invoke((MethodInvoker)delegate { lb_userList.Items.Clear(); });
-            for(int j = 0;j < countUsers;j++)
+            for (int j = 0; j < countUsers; j++)
             {
-                lb_userList.Invoke((MethodInvoker)delegate { lb_userList.Items.Add(Users[j]) ; });
+                lb_userList.Invoke((MethodInvoker)delegate { lb_userList.Items.Add(Users[j]); });
+            }
+        }
+
+        private void WhenSignUserList(string name)
+        {
+
+            //char ch = ':';
+
+            //string nicname = " ";
+
+            //int indexLastOfChar = name.LastIndexOf(ch);
+
+            //if (indexLastOfChar > 1)
+            //{
+            //    nicname = name.Remove(indexLastOfChar);
+            //}
+            string[] Users = name.Split(':');
+            int countUsers = Users.Length - 1;
+            lb_userList.Invoke((MethodInvoker)delegate { lb_userList.Items.Clear(); });
+            for (int j = 0; j < countUsers; j++)
+            {
+                lb_userList.Invoke((MethodInvoker)delegate { lb_userList.Items.Add(Users[j]); });
             }
         }
 
@@ -549,7 +516,7 @@ namespace ClientForm
 
                     pictureBoxAvatar.Image = Image.FromFile("http://127.0.0.1/uploads/" + fileName);
                 }
-                pictureBoxAvatar.SizeMode = PictureBoxSizeMode.Zoom; 
+                pictureBoxAvatar.SizeMode = PictureBoxSizeMode.Zoom;
 
                 //pictureBoxAvatar.Load("http://127.0.0.1/uploads/" + fileName);
 
@@ -568,8 +535,9 @@ namespace ClientForm
                 {
                     openFileDialog.Filter = "Image files (*.webp, *.png, *.tif, *.tiff, *.jpg)|*.webp;*.png;*.tif;*.tiff;*.jpg";
                     openFileDialog.FileName = "";
-                    if (openFileDialog.ShowDialog() == DialogResult.OK) {
-                        
+                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+
                         string pathFileName = openFileDialog.FileName;
                         string s = DateTime.Now.ToString("yyyyMMddhhmmss");
 
@@ -582,7 +550,7 @@ namespace ClientForm
 
                         resizeImage(600, 600, pathFileName);
 
-                       //_safeFileName = "Avatar_" + s;
+                        //_safeFileName = "Avatar_" + s;
 
                         if (Path.GetExtension(pathFileName) == ".webp")
                         {
@@ -593,7 +561,7 @@ namespace ClientForm
                         {
                             pictureBoxAvatar.Image = Image.FromFile(Environment.CurrentDirectory + "\\Temp\\" + _safeFileName);
                         }
-                            
+
                     }
                 }
             }
@@ -607,7 +575,7 @@ namespace ClientForm
         {
             Control.CheckForIllegalCrossThreadCalls = false;
             byte[] rawWebP;
-            
+
             try
             {
                 if (this.pictureBoxAvatar.Image == null)
@@ -673,8 +641,8 @@ namespace ClientForm
             //string _onlyFilePath = "";
             //string lossyFileName = Environment.CurrentDirectory + "\\Temp\\" + _safeFileName;
             //System.IO.File.Copy(stPhotoPath, lossyFileName, true);
-            
-            Image imgPhoto = Image.FromFile(stPhotoPath); 
+
+            Image imgPhoto = Image.FromFile(stPhotoPath);
 
             int sourceWidth = imgPhoto.Width;
             int sourceHeight = imgPhoto.Height;
@@ -734,5 +702,5 @@ namespace ClientForm
         }
     }
 
-   
+
 }

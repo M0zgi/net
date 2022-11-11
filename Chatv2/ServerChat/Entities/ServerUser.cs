@@ -21,6 +21,7 @@ namespace ServerChat.Entities
         public string Message { get; set; }
 
         private Socket _userHandle;
+
         private Task _userThread;
 
         private ManualResetEvent acceptEvent = new ManualResetEvent(false);
@@ -28,7 +29,6 @@ namespace ServerChat.Entities
         {
             _userHandle = handle;
             _userThread = new Task(listner);
-            //_userThread.IsBackground = true;
             _userThread.Start();
         }
         private void listner()
@@ -49,72 +49,50 @@ namespace ServerChat.Entities
                     BinaryFormatter formatter = new BinaryFormatter();
                     Request request;
 
-                    try
+                    using (MemoryStream ms = new MemoryStream(data))
                     {
-                        using (MemoryStream ms = new MemoryStream(data))
+                        try
                         {
-                            try
+                            request = (Request)formatter.Deserialize(ms);
+                            switch (request.Command)
                             {
-                                request = (Request)formatter.Deserialize(ms);
-                                switch (request.Command)
-                                {
-                                    case RequestCommands.Auth:
-                                        Auth auth = (Auth)request.Body;
-                                        if (auth.msg != "сервер я отключаюсь" && auth.msg !="Connection closed!")
-                                        {
-                                            Name = auth.Username;
-                                            Server.NewUser(this);
-                                        }
+                                case RequestCommands.Auth:
+                                    Auth auth = (Auth)request.Body;
+                                    if (auth.msg != "сервер я отключаюсь" && auth.msg != "Connection closed!")
+                                    {
+                                        Name = auth.Username;
+                                        Server.NewUser(this);
+                                    }
 
-                                        //else if (auth.msg != "Connection closed!")
-                                        //{
-                                        //    Console.WriteLine(auth.msg);
-                                        //}
+                                    else
+                                    {
+                                        Server.EndUser(this);
+                                    }
+                                    break;
 
-                                        else
-                                        {
-                                            Server.EndUser(this);
-                                        }
-                                        // Console.WriteLine(auth.Email);
-                                        // Console.WriteLine(auth.Password);
+                                case RequestCommands.SendMsg:
+                                    SendMessage msg = (SendMessage)request.Body;
+                                    Message = msg.Message;
+                                    Server.UserConnectedSend(this);
+                                    break;
 
-                                        break;
+                                case RequestCommands.Ping:
+                                    TestServer ping = (TestServer)request.Body;
+                                    Console.WriteLine(ping.msg);
+                                    SendOk();
+                                    break;
 
-                                    case RequestCommands.SendMsg:
-                                        SendMessage msg = (SendMessage)request.Body;
-                                        Message = msg.Message;
-                                        Server.UserConnectedSend(this);
-                                        break;
-
-                                    case RequestCommands.Ping:
-                                        TestServer ping = (TestServer)request.Body;
-                                        Console.WriteLine(ping.msg);
-                                        SendOk();
-                                        break;
-                                    //case RequestCommands.Exit:
-                                    //    Server.EndUser(this);
-                                    //    break;
-
-                                    default:
-                                        Console.WriteLine(" No Command ");
-                                        break;
-                                }
+                                default:
+                                    Console.WriteLine(" No Command ");
+                                    break;
                             }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine(ex.Message);
-                                //Server.EndUser(this);
-                            }
-
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                        //throw;
-                    }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
 
-
+                    }
                 }
             }
             catch { Server.EndUser(this); }
@@ -122,16 +100,11 @@ namespace ServerChat.Entities
 
         public void End()
         {
-
-           
-
             Response response = new Response();
 
             response.Status = ResponseStatus.OK;
             string message = "Пока :)!";
             Auth Resp = new Auth();
-
-            //Ping pingResp = (Ping) response.Body;
             Resp.msg = message;
             response.Body = Resp;
             BinaryFormatter formatter = new BinaryFormatter();
@@ -145,9 +118,8 @@ namespace ServerChat.Entities
 
                     // Отправка сущности на сервер
                     _userHandle.Send(r);
-                    Thread.Sleep(500);
                     _userHandle.BeginDisconnect(false, new AsyncCallback(DisconnectCallBack), _userHandle);
-                    //_userHandle.Close();
+               
                 }
                 catch (Exception ex)
                 {
@@ -174,7 +146,6 @@ namespace ServerChat.Entities
 
                     // Отправка сущности на сервер
                     _userHandle.Send(r);
-                    //socketOk.BeginDisconnect(false, new AsyncCallback(DisconnectCallBack), socketOk);
                 }
                 catch (Exception ex)
                 {
@@ -201,7 +172,6 @@ namespace ServerChat.Entities
 
                     // Отправка сущности на сервер
                     _userHandle.Send(r);
-                    //socketOk.BeginDisconnect(false, new AsyncCallback(DisconnectCallBack), socketOk);
                 }
                 catch (Exception ex)
                 {
@@ -217,8 +187,6 @@ namespace ServerChat.Entities
             response.Status = ResponseStatus.OK;
             string message = "Привет клиент!";
             TestServer pingResp = new TestServer();
-
-            //Ping pingResp = (Ping) response.Body;
             pingResp.msg = message;
             response.Body = pingResp;
             BinaryFormatter formatter = new BinaryFormatter();
@@ -245,9 +213,7 @@ namespace ServerChat.Entities
         {
             Socket handler = ar.AsyncState as Socket;
             handler.EndDisconnect(ar);
-            //Console.WriteLine("Connection closed");
             acceptEvent.Set();
-            //_userHandle.EndDisconnect(ar);
         }
 
         public void Send(string Buffer)
@@ -268,7 +234,6 @@ namespace ServerChat.Entities
 
                     // Отправка сущности на сервер
                     _userHandle.Send(r);
-                    //socketOk.BeginDisconnect(false, new AsyncCallback(DisconnectCallBack), socketOk);
                 }
                 catch (Exception ex)
                 {

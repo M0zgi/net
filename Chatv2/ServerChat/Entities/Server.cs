@@ -15,18 +15,12 @@ namespace ServerChat.Entities
 
         private static ManualResetEvent acceptEvent = new ManualResetEvent(false);
 
-
         public static int UserId = 1;
         public static int CountUsers;
 
         public const string Host = "127.0.0.1";
         public const int Port = 4041;
 
-       // public static int port { get; set; }
-       // public static string ip { get; set; }
-
-       //private static Task task;
-//
         public static Socket ServerSocket;
 
         public static bool Work = true;
@@ -39,7 +33,10 @@ namespace ServerChat.Entities
         {
             Console.WriteLine($"Пользователь {Username}: вошел в чат.");
             CountUsers++;
+            
             SendGlobalMessage($"{Username}: подключился к чату.");
+            
+            Thread.Sleep(500);
             SendUserList();
         };
         public static event UserEvent UserDisconnected = (Username) =>
@@ -52,10 +49,7 @@ namespace ServerChat.Entities
 
         public static event UserEventSend SendMsg = (Username, Messege) =>
         {
-            //Console.WriteLine($"User {Username} connected.");
-            //CountUsers++;
             SendMessageAll($"{Username} {Messege}");
-            //SendUserList();
         };
 
         public static void EndUser(ServerUser usr)
@@ -65,7 +59,6 @@ namespace ServerChat.Entities
             UserList.Remove(usr);
             usr.End();
             UserDisconnected(usr.Name);
-
         }
 
         public static void NewUser(ServerUser usr)
@@ -82,7 +75,6 @@ namespace ServerChat.Entities
             {
                 EndUser(usr);
             }
-
             SendMsg(usr.Name, usr.Message);
         }
 
@@ -110,7 +102,6 @@ namespace ServerChat.Entities
             {
                 userList += UserList[i].Name + ",";
             }
-
             SendAllUsers(userList);
         }
 
