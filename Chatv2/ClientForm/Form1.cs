@@ -304,8 +304,6 @@ namespace ClientForm
                     }
                 }
             }
-
-
         }
 
         private void AddMessage(string Content)
@@ -539,7 +537,8 @@ namespace ClientForm
                     {
 
                         string pathFileName = openFileDialog.FileName;
-                        string s = DateTime.Now.ToString("yyyyMMddhhmmss");
+                        //string s = DateTime.Now.ToString("yyyyMMddhhmmss");
+                        
 
                         //_onlyFilePath =
                         //    openFileDialog.FileName.Remove(
@@ -550,7 +549,7 @@ namespace ClientForm
 
                         resizeImage(600, 600, pathFileName);
 
-                        //_safeFileName = "Avatar_" + s;
+                       //_safeFileName = "Avatar_" + s;
 
                         if (Path.GetExtension(pathFileName) == ".webp")
                         {
@@ -693,6 +692,11 @@ namespace ClientForm
                 new Rectangle(destX, destY, destWidth, destHeight),
                 new Rectangle(sourceX, sourceY, sourceWidth, sourceHeight),
                 GraphicsUnit.Pixel);
+
+            string getfile = _safeFileName.Substring(_safeFileName.LastIndexOf("."));
+
+            _safeFileName = "Avatar_" + tb_login.Text + DateTime.Now.ToString("yyyyMMddhhmmss") + getfile;
+
             bmPhoto.Save(Environment.CurrentDirectory + "\\Temp\\" + _safeFileName);
 
             grPhoto.Dispose();
